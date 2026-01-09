@@ -1,4 +1,4 @@
-import { Calendar, Building2, CheckCircle } from 'lucide-react';
+import { Calendar, Building2, CheckCircle, LogOut } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import logo from '../assets/bookmyvenuelogo.png';
 
@@ -69,6 +69,17 @@ const Sidebar = ({ activePage = 'dashboard' }) => {
           </Link>
         </div>
       </nav>
+
+      {/* Logout Button */}
+      <div className="mt-auto pt-4 border-t border-purple-500">
+        <Link 
+          to="/" 
+          className="flex items-center gap-3 px-4 py-3 rounded-lg transition hover:bg-purple-500 text-white"
+        >
+          <LogOut size={20} />
+          <span>Logout</span>
+        </Link>
+      </div>
     </div>
   );
 };
