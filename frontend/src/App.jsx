@@ -6,6 +6,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Dashboard from './pages/dashboard'
 import Login from "./pages/Login"
 import Venues from "./pages/venues"
+import MyBookings from "./pages/MyBookings"
 
 
 function App() {
@@ -15,6 +16,7 @@ function App() {
         <Route path='/' element={<Login/>} />
         <Route path='/dashboard' element={<Dashboard/>} />
         <Route path='/venues' element={<Venues/>} />
+        <Route path='/my-bookings' element={<MyBookings/>} />
       </Routes>
     </BrowserRouter>
   )

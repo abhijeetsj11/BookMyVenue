@@ -1,13 +1,12 @@
 import { Calendar, Building2, CheckCircle } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import logo from '../assets/bookmyvenuelogo.png';
 
 const Sidebar = ({ activePage = 'dashboard' }) => {
   return (
     <div className="w-64 bg-gradient-to-b from-purple-600 to-purple-700 text-white p-4 flex flex-col h-full">
       <div className="flex items-center gap-3 mb-6">
-        <div className="w-10 h-10 bg-white rounded-lg flex items-center justify-center">
-          <Building2 className="text-purple-600" size={24} />
-        </div>
+        <img src={logo} alt="BookMyVenue Logo" className="h-12 w-auto" />
       </div>
 
       <nav className="flex-1 space-y-2">
