@@ -57,9 +57,9 @@ const Venues = () => {
             </div>
           </div>
 
-          {/* Search and Add Button */}
-          <div className="flex items-center gap-4 mb-6">
-            <div className="flex-1 relative">
+          {/* Search */}
+          <div className="mb-6">
+            <div className="relative">
               <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
               <input
                 type="text"
@@ -69,14 +69,10 @@ const Venues = () => {
                 className="w-full pl-12 pr-4 py-3 rounded-full border border-gray-200 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
               />
             </div>
-            <button className="flex items-center gap-2 bg-purple-500 hover:bg-purple-600 text-white px-6 py-3 rounded-full transition duration-200 font-medium shadow-lg">
-              <Plus size={20} />
-              <span>Add Venue</span>
-            </button>
           </div>
 
-          {/* Filter Tabs and Sort */}
-          <div className="flex items-center justify-between mb-8">
+          {/* Filter Tabs */}
+          <div className="mb-8">
             <div className="flex gap-3">
               {filterCategories.map(category => (
                 <button
@@ -92,10 +88,6 @@ const Venues = () => {
                 </button>
               ))}
             </div>
-            <button className="flex items-center gap-2 text-gray-600 hover:text-purple-600 transition duration-200">
-              <span className="font-medium">All</span>
-              <ChevronDown size={20} />
-            </button>
           </div>
 
           {/* Venue Cards Grid */}
