@@ -11,6 +11,7 @@ import Venues from "./pages/venues"
 import MyBookings from "./pages/MyBookings"
 import Bookvenue from "./pages/Bookvenue"
 import Unauthorized from "./pages/Unauthorized"
+import ManageVenue from "./pages/ManageVenue"
 
 
 function App() {
@@ -58,9 +59,7 @@ function App() {
 
           <Route path='/manage-venues' element={
             <ProtectedRoute allowedRoles={['admin']}>
-              <div className="flex items-center justify-center h-screen">
-                <h1 className="text-2xl">Manage Venues Page - Coming Soon</h1>
-              </div>
+              <ManageVenue/>
             </ProtectedRoute>
           } />
         </Routes>
