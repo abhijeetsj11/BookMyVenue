@@ -49,14 +49,6 @@ function App() {
           } />
 
           {/* Admin only routes */}
-          <Route path='/users' element={
-            <ProtectedRoute allowedRoles={['admin']}>
-              <div className="flex items-center justify-center h-screen">
-                <h1 className="text-2xl">Users Management Page - Coming Soon</h1>
-              </div>
-            </ProtectedRoute>
-          } />
-
           <Route path='/manage-venues' element={
             <ProtectedRoute allowedRoles={['admin']}>
               <ManageVenue/>

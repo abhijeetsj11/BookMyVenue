@@ -53,7 +53,7 @@ const Dashboard = () => {
         {/* Header */}
         <div className="flex justify-between items-center mb-4">
           <div>
-            <h1 className="text-4xl font-bold text-purple-600 mb-2">Hello, Rachel!</h1>
+            <h1 className="text-4xl font-bold text-purple-600 mb-2">Hello, Bhosdi!</h1>
             <p className="text-gray-600">Welcome to your venue management dashboard.</p>
           </div>
           <div className="w-12 h-12 bg-gradient-to-br from-purple-400 to-blue-400 rounded-full"></div>
