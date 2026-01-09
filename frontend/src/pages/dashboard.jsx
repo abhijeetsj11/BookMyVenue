@@ -1,7 +1,193 @@
+import { Calendar, Building2, Clock, CheckCircle, XCircle, AlertCircle } from 'lucide-react';
+
 const Dashboard = () => {
+  // Sample data
+  const stats = [
+    { title: "Today's Bookings", value: 5, color: "bg-purple-400", icon: Calendar },
+    { title: "Available Venues", value: 12, color: "bg-teal-400", icon: Building2 },
+    { title: "Pending Approvals", value: 3, color: "bg-orange-400", icon: Clock }
+  ];
+
+  const upcomingSchedule = [
+    {
+      id: 1,
+      title: "Biology Periview",
+      type: "Room • 203",
+      location: "F001M 2023",
+      time: "10:00 AM - 1:00 AM",
+      status: "This to Review",
+      statusColor: "text-orange-500"
+    },
+    {
+      id: 2,
+      title: "Glense Acomper",
+      type: "Guest Lecture",
+      location: "Auditorium",
+      time: "3:00 PM - 5:00 PM",
+      statusColor: "text-green-500"
+    },
+    {
+      id: 3,
+      title: "Math= Arrhest..",
+      type: "Math Workshop",
+      location: "Seminar Hall",
+      time: "9:00 AM - 1:00 AM",
+      statusColor: "text-green-500"
+    }
+  ];
+
+  const recentBookings = [
+    { venue: "Room 305", date: "Apr 22, 2024", status: "Approved", statusColor: "text-green-500" },
+    { venue: "Seminar Hall", date: "Apr 21, 2024", status: "Pending", statusColor: "text-yellow-500" },
+    { venue: "Auditorium", date: "Apr 20, 2024", status: "Pending", statusColor: "text-blue-400" },
+    { venue: "Library", date: "Apr 19, 2024", status: "Approved", statusColor: "text-green-500" }
+  ];
+
   return (
-  <div>Dashboard Page</div>
-);
+    <div className="flex min-h-screen bg-gradient-to-br from-purple-50 to-blue-50">
+      {/* Sidebar */}
+      <div className="w-64 bg-gradient-to-b from-purple-600 to-purple-700 text-white p-6 flex flex-col">
+        <div className="flex items-center gap-3 mb-8">
+          <div className="w-10 h-10 bg-white rounded-lg flex items-center justify-center">
+            <Building2 className="text-purple-600" size={24} />
+          </div>
+        </div>
+
+        <nav className="flex-1 space-y-2">
+          <a href="#" className="flex items-center gap-3 px-4 py-3 bg-purple-500 rounded-lg">
+            <Calendar size={20} />
+            <span>Dashboard</span>
+          </a>
+          <a href="#" className="flex items-center gap-3 px-4 py-3 hover:bg-purple-500 rounded-lg transition">
+            <Building2 size={20} />
+            <span>Venues</span>
+          </a>
+          <a href="#" className="flex items-center gap-3 px-4 py-3 hover:bg-purple-500 rounded-lg transition">
+            <Calendar size={20} />
+            <span>Book Venue</span>
+          </a>
+          <a href="#" className="flex items-center gap-3 px-4 py-3 hover:bg-purple-500 rounded-lg transition">
+            <CheckCircle size={20} />
+            <span>My Bookings</span>
+          </a>
+
+          <div className="pt-6">
+            <p className="text-purple-300 text-sm uppercase tracking-wider px-4 mb-2">Admin</p>
+            <a href="#" className="flex items-center gap-3 px-4 py-3 hover:bg-purple-500 rounded-lg transition">
+              <Calendar size={20} />
+              <span>Users</span>
+            </a>
+            <a href="#" className="flex items-center gap-3 px-4 py-3 hover:bg-purple-500 rounded-lg transition">
+              <Building2 size={20} />
+              <span>Manage Venues</span>
+            </a>
+          </div>
+        </nav>
+      </div>
+
+      {/* Main Content */}
+      <div className="flex-1 p-8">
+        {/* Header */}
+        <div className="flex justify-between items-center mb-8">
+          <div>
+            <h1 className="text-4xl font-bold text-purple-600 mb-2">Hello, Rachel!</h1>
+            <p className="text-gray-600">Welcome to your venue management dashboard.</p>
+          </div>
+          <div className="w-12 h-12 bg-gradient-to-br from-purple-400 to-blue-400 rounded-full"></div>
+        </div>
+
+        {/* Stats Cards */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+          {stats.map((stat, index) => (
+            <div key={index} className={`${stat.color} rounded-2xl p-6 text-white shadow-lg`}>
+              <div className="flex justify-between items-start mb-4">
+                <div>
+                  <p className="text-white/90 font-medium mb-2">{stat.title}</p>
+                  <p className="text-4xl font-bold">{stat.value}</p>
+                </div>
+                <div className="bg-white/20 p-3 rounded-lg">
+                  <stat.icon size={32} />
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* Content Grid */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+          {/* Upcoming Schedule */}
+          <div className="bg-white rounded-2xl p-6 shadow-lg">
+            <h2 className="text-xl font-bold text-purple-600 mb-4">Upcoming Schedule</h2>
+            <p className="text-gray-500 text-sm mb-4">April 2024</p>
+            
+            <div className="space-y-4">
+              {upcomingSchedule.map((item) => (
+                <div key={item.id} className="flex items-start gap-4 p-3 bg-purple-50 rounded-lg">
+                  <div className="w-10 h-10 bg-purple-200 rounded-lg flex items-center justify-center flex-shrink-0">
+                    <Calendar className="text-purple-600" size={20} />
+                  </div>
+                  <div className="flex-1">
+                    <h3 className="font-semibold text-purple-700">{item.title}</h3>
+                    <p className="text-sm text-gray-600">{item.type}</p>
+                    <p className="text-xs text-gray-500">{item.location}</p>
+                  </div>
+                  <div className="text-right">
+                    {item.status && <p className="text-xs text-orange-500 mb-1">{item.status}</p>}
+                    <p className="text-xs text-gray-600">{item.time}</p>
+                    <p className={`text-xs font-semibold ${item.statusColor}`}>0.0 PPM</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            <button className="w-full mt-4 bg-purple-600 text-white py-3 rounded-lg hover:bg-purple-700 transition">
+              View Schedule
+            </button>
+          </div>
+
+          {/* Recent Bookings */}
+          <div className="bg-white rounded-2xl p-6 shadow-lg">
+            <div className="flex justify-between items-center mb-4">
+              <h2 className="text-xl font-bold text-purple-600">Recent Bookings</h2>
+              <a href="#" className="text-purple-600 text-sm hover:underline">View All »</a>
+            </div>
+
+            <div className="overflow-x-auto">
+              <table className="w-full">
+                <thead>
+                  <tr className="border-b">
+                    <th className="text-left py-3 text-sm text-gray-500 font-medium">Venue</th>
+                    <th className="text-left py-3 text-sm text-gray-500 font-medium">Date</th>
+                    <th className="text-left py-3 text-sm text-gray-500 font-medium">Status</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {recentBookings.map((booking, index) => (
+                    <tr key={index} className="border-b last:border-0">
+                      <td className="py-3 text-gray-800">{booking.venue}</td>
+                      <td className="py-3 text-gray-600">{booking.date}</td>
+                      <td className={`py-3 font-medium ${booking.statusColor}`}>{booking.status}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+
+            <div className="grid grid-cols-2 gap-4 mt-6">
+              <button className="bg-purple-500 text-white py-3 px-4 rounded-lg hover:bg-purple-600 transition flex items-center justify-center gap-2">
+                <Calendar size={20} />
+                <span>Book a Venue</span>
+              </button>
+              <button className="bg-purple-600 text-white py-3 px-4 rounded-lg hover:bg-purple-700 transition flex items-center justify-center gap-2">
+                <Building2 size={20} />
+                <span>Manage Venues</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
 }
 
 export default Dashboard;
