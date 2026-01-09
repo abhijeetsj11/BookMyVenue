@@ -196,18 +196,6 @@ const Login = () => {
                                 Log in
                             </button>
                         </div>
-
-                        {/* Social login removed as requested */}
-
-                        {/* Sign Up Link */}
-                        <div className="text-center">
-                            <p className="text-sm text-gray-600">
-                                Don't have an account?{' '}
-                                <a href="#" className="font-medium text-purple-600 hover:text-purple-500">
-                                    Sign up
-                                </a>
-                            </p>
-                        </div>
                     </form>
                 </div>
             </div>
