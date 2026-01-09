@@ -44,10 +44,10 @@ const Dashboard = () => {
   ];
 
   return (
-    <div className="flex min-h-screen bg-gradient-to-br from-purple-50 to-blue-50">
+    <div className="flex h-screen w-full bg-gradient-to-br from-purple-50 to-blue-50 overflow-hidden">
       {/* Sidebar */}
-      <div className="w-64 bg-gradient-to-b from-purple-600 to-purple-700 text-white p-6 flex flex-col">
-        <div className="flex items-center gap-3 mb-8">
+      <div className="w-64 bg-gradient-to-b from-purple-600 to-purple-700 text-white p-4 flex flex-col h-full">
+        <div className="flex items-center gap-3 mb-6">
           <div className="w-10 h-10 bg-white rounded-lg flex items-center justify-center">
             <Building2 className="text-purple-600" size={24} />
           </div>
@@ -86,9 +86,9 @@ const Dashboard = () => {
       </div>
 
       {/* Main Content */}
-      <div className="flex-1 p-8">
+      <div className="flex-1 p-4 overflow-y-auto h-full">
         {/* Header */}
-        <div className="flex justify-between items-center mb-8">
+        <div className="flex justify-between items-center mb-4">
           <div>
             <h1 className="text-4xl font-bold text-purple-600 mb-2">Hello, Rachel!</h1>
             <p className="text-gray-600">Welcome to your venue management dashboard.</p>
@@ -97,9 +97,9 @@ const Dashboard = () => {
         </div>
 
         {/* Stats Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
           {stats.map((stat, index) => (
-            <div key={index} className={`${stat.color} rounded-2xl p-6 text-white shadow-lg`}>
+            <div key={index} className={`${stat.color} rounded-2xl p-4 text-white shadow-lg`}>
               <div className="flex justify-between items-start mb-4">
                 <div>
                   <p className="text-white/90 font-medium mb-2">{stat.title}</p>
@@ -114,15 +114,15 @@ const Dashboard = () => {
         </div>
 
         {/* Content Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-2">
           {/* Upcoming Schedule */}
-          <div className="bg-white rounded-2xl p-6 shadow-lg">
+          <div className="bg-white rounded-2xl p-4 shadow-lg">
             <h2 className="text-xl font-bold text-purple-600 mb-4">Upcoming Schedule</h2>
             <p className="text-gray-500 text-sm mb-4">April 2024</p>
             
-            <div className="space-y-4">
+            <div className="space-y-3">
               {upcomingSchedule.map((item) => (
-                <div key={item.id} className="flex items-start gap-4 p-3 bg-purple-50 rounded-lg">
+                <div key={item.id} className="flex items-start gap-3 p-3 bg-purple-50 rounded-lg">
                   <div className="w-10 h-10 bg-purple-200 rounded-lg flex items-center justify-center flex-shrink-0">
                     <Calendar className="text-purple-600" size={20} />
                   </div>
@@ -140,13 +140,13 @@ const Dashboard = () => {
               ))}
             </div>
 
-            <button className="w-full mt-4 bg-purple-600 text-white py-3 rounded-lg hover:bg-purple-700 transition">
+            <button className="w-full mt-3 bg-purple-600 text-white py-2 rounded-lg hover:bg-purple-700 transition">
               View Schedule
             </button>
           </div>
 
           {/* Recent Bookings */}
-          <div className="bg-white rounded-2xl p-6 shadow-lg">
+          <div className="bg-white rounded-2xl p-4 shadow-lg">
             <div className="flex justify-between items-center mb-4">
               <h2 className="text-xl font-bold text-purple-600">Recent Bookings</h2>
               <a href="#" className="text-purple-600 text-sm hover:underline">View All »</a>
@@ -163,22 +163,22 @@ const Dashboard = () => {
                 </thead>
                 <tbody>
                   {recentBookings.map((booking, index) => (
-                    <tr key={index} className="border-b last:border-0">
-                      <td className="py-3 text-gray-800">{booking.venue}</td>
-                      <td className="py-3 text-gray-600">{booking.date}</td>
-                      <td className={`py-3 font-medium ${booking.statusColor}`}>{booking.status}</td>
-                    </tr>
+                        <tr key={index} className="border-b last:border-0">
+                          <td className="py-3 text-gray-800">{booking.venue}</td>
+                          <td className="py-3 text-gray-600">{booking.date}</td>
+                          <td className={`py-3 font-medium ${booking.statusColor}`}>{booking.status}</td>
+                        </tr>
                   ))}
                 </tbody>
               </table>
             </div>
 
-            <div className="grid grid-cols-2 gap-4 mt-6">
-              <button className="bg-purple-500 text-white py-3 px-4 rounded-lg hover:bg-purple-600 transition flex items-center justify-center gap-2">
+            <div className="grid grid-cols-2 gap-3 mt-4">
+              <button className="bg-purple-500 text-white py-2 px-3 rounded-lg hover:bg-purple-600 transition flex items-center justify-center gap-2">
                 <Calendar size={20} />
                 <span>Book a Venue</span>
               </button>
-              <button className="bg-purple-600 text-white py-3 px-4 rounded-lg hover:bg-purple-700 transition flex items-center justify-center gap-2">
+              <button className="bg-purple-600 text-white py-2 px-3 rounded-lg hover:bg-purple-700 transition flex items-center justify-center gap-2">
                 <Building2 size={20} />
                 <span>Manage Venues</span>
               </button>

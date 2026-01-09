@@ -13,8 +13,8 @@ const Login = () => {
     };
 
     return (
-        <div className="min-h-screen flex items-center justify-center bg-gray-50 p-4">
-            <div className="flex bg-white rounded-2xl shadow-xl overflow-hidden max-w-4xl w-full max-h-[90vh]">
+        <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+            <div className="flex bg-white rounded-2xl shadow-xl overflow-hidden max-w-4xl w-full">
                 {/* Left Panel */}
                 <div className="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-purple-400 via-purple-500 to-purple-600 relative overflow-hidden">
                     <div className="absolute inset-0 bg-purple-300 opacity-20 rounded-full -top-1/2 -left-1/4 w-full h-full blur-3xl"></div>
@@ -56,8 +56,8 @@ const Login = () => {
                 </div>
 
                 {/* Right Panel - Login Form */}
-                <div className="w-full lg:w-1/2 flex items-center justify-center p-6 lg:p-8 bg-gray-50">
-                    <div className="max-w-sm w-full space-y-5">
+                <div className="w-full lg:w-1/2 flex items-center justify-center p-8 bg-gray-50">
+                    <div className="max-w-md w-full space-y-6">
                     {/* Header */}
                     <div>
                         <h2 className="text-3xl font-bold text-purple-600">Login</h2>

@@ -1,21 +1,19 @@
 
-import './App.css'
+import './index.css'
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 
 //Routes - Pages
-import Dashboard from './pages/Dashboard'
+import Dashboard from './pages/dashboard'
 import Login from "./pages/Login"
 
 
 function App() {
   return (
     <BrowserRouter>
-      <div>
-        <Routes>
-          <Route path='/' element={<Login/>} />
-          <Route path='/dashboard' element={<Dashboard/>} />
-        </Routes>
-      </div>
+      <Routes>
+        <Route path='/' element={<Login/>} />
+        <Route path='/dashboard' element={<Dashboard/>} />
+      </Routes>
     </BrowserRouter>
   )
 }
