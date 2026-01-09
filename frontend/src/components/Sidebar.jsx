@@ -20,6 +20,7 @@ const Sidebar = ({ activePage = 'dashboard' }) => {
     <div className="w-64 bg-gradient-to-b from-purple-600 to-purple-700 text-white p-4 flex flex-col h-full">
       <div className="flex items-center gap-3 mb-6">
         <img src={logo} alt="BookMyVenue Logo" className="h-12 w-auto" />
+        <span className="text-xl font-bold text-white">BookMyVenue</span>
       </div>
 
       <nav className="flex-1 space-y-2">
