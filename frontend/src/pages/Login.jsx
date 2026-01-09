@@ -1,16 +1,30 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
 import logo from '../assets/bookmyvenuelogo.png';
 
 const Login = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const [role, setRole] = useState('student');
     const [rememberMe, setRememberMe] = useState(false);
     const [showPassword, setShowPassword] = useState(false);
+    const navigate = useNavigate();
+    const { login } = useAuth();
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        // Handle login logic here
-        console.log('Login attempt:', { email, password, rememberMe });
+        
+        // TODO: Replace with actual API call
+        const userData = {
+            email,
+            role, // 'admin', 'staff', or 'student'
+            name: email.split('@')[0],
+            id: Math.random().toString(36).substr(2, 9)
+        };
+
+        login(userData);
+        navigate('/dashboard');
     };
 
     return (
@@ -63,6 +77,48 @@ const Login = () => {
 
                     {/* Form */}
                     <form onSubmit={handleSubmit} className="space-y-4">
+                        {/* Role Selection */}
+                        <div>
+                            <label className="block text-xs font-medium text-gray-700 mb-2">
+                                I am a
+                            </label>
+                            <div className="grid grid-cols-3 gap-2">
+                                <button
+                                    type="button"
+                                    onClick={() => setRole('student')}
+                                    className={`py-2.5 px-3 rounded-lg border-2 transition text-sm font-medium ${
+                                        role === 'student'
+                                            ? 'border-purple-500 bg-purple-50 text-purple-700'
+                                            : 'border-gray-200 hover:border-gray-300 text-gray-700'
+                                    }`}
+                                >
+                                    Student
+                                </button>
+                                <button
+                                    type="button"
+                                    onClick={() => setRole('staff')}
+                                    className={`py-2.5 px-3 rounded-lg border-2 transition text-sm font-medium ${
+                                        role === 'staff'
+                                            ? 'border-purple-500 bg-purple-50 text-purple-700'
+                                            : 'border-gray-200 hover:border-gray-300 text-gray-700'
+                                    }`}
+                                >
+                                    Staff
+                                </button>
+                                <button
+                                    type="button"
+                                    onClick={() => setRole('admin')}
+                                    className={`py-2.5 px-3 rounded-lg border-2 transition text-sm font-medium ${
+                                        role === 'admin'
+                                            ? 'border-purple-500 bg-purple-50 text-purple-700'
+                                            : 'border-gray-200 hover:border-gray-300 text-gray-700'
+                                    }`}
+                                >
+                                    Admin
+                                </button>
+                            </div>
+                        </div>
+
                         {/* Email Input */}
                         <div>
                             <label htmlFor="email" className="block text-xs font-medium text-gray-700 mb-1">

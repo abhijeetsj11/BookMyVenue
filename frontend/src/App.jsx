@@ -1,6 +1,8 @@
 
 import './index.css'
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { AuthProvider } from './context/AuthContext';
+import ProtectedRoute from './components/ProtectedRoute';
 
 //Routes - Pages
 import Dashboard from './pages/dashboard'
@@ -8,19 +10,62 @@ import Login from "./pages/Login"
 import Venues from "./pages/venues"
 import MyBookings from "./pages/MyBookings"
 import Bookvenue from "./pages/Bookvenue"
+import Unauthorized from "./pages/Unauthorized"
 
 
 function App() {
   return (
-    <BrowserRouter>
-      <Routes>
-        <Route path='/' element={<Login/>} />
-        <Route path='/dashboard' element={<Dashboard/>} />
-        <Route path='/venues' element={<Venues/>} />
-        <Route path='/my-bookings' element={<MyBookings/>} />
-        <Route path='/book-venue' element={<Bookvenue/>} />
-      </Routes>
-    </BrowserRouter>
+    <AuthProvider>
+      <BrowserRouter>
+        <Routes>
+          <Route path='/' element={<Login/>} />
+          <Route path='/unauthorized' element={<Unauthorized/>} />
+          
+          {/* Protected Routes - All authenticated users */}
+          <Route path='/dashboard' element={
+            <ProtectedRoute>
+              <Dashboard/>
+            </ProtectedRoute>
+          } />
+          
+          <Route path='/venues' element={
+            <ProtectedRoute>
+              <Venues/>
+            </ProtectedRoute>
+          } />
+
+          {/* Staff and Admin only routes */}
+          <Route path='/book-venue' element={
+            <ProtectedRoute allowedRoles={['staff', 'admin']}>
+              <Bookvenue/>
+            </ProtectedRoute>
+          } />
+
+          <Route path='/my-bookings' element={
+            <ProtectedRoute allowedRoles={['staff', 'admin']}>
+              <MyBookings/>
+            </ProtectedRoute>
+          } />
+
+          {/* Admin only routes */}
+          <Route path='/users' element={
+            <ProtectedRoute allowedRoles={['admin']}>
+              <div className="flex items-center justify-center h-screen">
+                <h1 className="text-2xl">Users Management Page - Coming Soon</h1>
+              </div>
+            </ProtectedRoute>
+          } />
+
+          <Route path='/manage-venues' element={
+            <ProtectedRoute allowedRoles={['admin']}>
+              <div className="flex items-center justify-center h-screen">
+                <h1 className="text-2xl">Manage Venues Page - Coming Soon</h1>
+              </div>
+            </ProtectedRoute>
+          } />
+        </Routes>
+      </BrowserRouter>
+    </AuthProvider>
   )
 }
 
