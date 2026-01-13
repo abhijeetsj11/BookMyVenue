@@ -56,19 +56,10 @@ const ManageVenue = () => {
       <div className="flex-1 overflow-auto">
         <div className="p-8">
           {/* Header Section */}
-          <div className="flex items-center justify-between mb-2">
+          <div className="mb-2">
             <div>
               <h1 className="text-4xl font-bold text-purple-700 mb-2">Manage Venues</h1>
               <p className="text-gray-600">Add, edit, or remove venues from your campus venue management system.</p>
-            </div>
-            <div className="flex items-center gap-4">
-              <div className="w-12 h-12 bg-purple-100 rounded-full overflow-hidden">
-                <img 
-                  src="https://via.placeholder.com/48" 
-                  alt="User" 
-                  className="w-full h-full object-cover"
-                />
-              </div>
             </div>
           </div>
 

@@ -99,12 +99,11 @@ const Bookvenue = () => {
 
       <main className="flex-1 overflow-y-auto p-6">
         <div className="max-w-6xl mx-auto">
-          <header className="mb-6 flex items-center justify-between">
+          <header className="mb-6">
             <div>
               <h1 className="text-3xl font-bold text-purple-600">Book a Venue</h1>
               <p className="text-sm text-gray-600 mt-1">Fill out the form below to request a venue for your extra class or event.</p>
             </div>
-            <div className="w-12 h-12 rounded-full bg-gradient-to-br from-purple-400 to-blue-400" />
           </header>
 
           <section className="bg-white shadow-lg rounded-2xl p-6">
