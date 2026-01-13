@@ -66,7 +66,11 @@ export const venuesApi = {
 
 export const bookingsApi = {
   myBookings: () => apiRequest('/api/bookings'),
+  list: () => apiRequest('/api/bookings'), // Admin sees all, users see only their own
   create: (payload) => apiRequest('/api/bookings', { method: 'POST', body: payload }),
+  update: (id, payload) => apiRequest(`/api/bookings/${id}`, { method: 'PUT', body: payload }),
+  updateStatus: (id, payload) => apiRequest(`/api/bookings/${id}/status`, { method: 'PUT', body: payload }),
+  delete: (id) => apiRequest(`/api/bookings/${id}`, { method: 'DELETE' }),
 };
 
 export { APIError };

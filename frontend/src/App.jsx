@@ -12,6 +12,7 @@ import MyBookings from "./pages/MyBookings"
 import Bookvenue from "./pages/Bookvenue"
 import Unauthorized from "./pages/Unauthorized"
 import ManageVenue from "./pages/ManageVenue"
+import ManageBookings from "./pages/ManageBookings"
 
 
 function App() {
@@ -52,6 +53,12 @@ function App() {
           <Route path='/manage-venues' element={
             <ProtectedRoute allowedRoles={['admin']}>
               <ManageVenue/>
+            </ProtectedRoute>
+          } />
+
+          <Route path='/manage-bookings' element={
+            <ProtectedRoute allowedRoles={['admin']}>
+              <ManageBookings/>
             </ProtectedRoute>
           } />
         </Routes>
