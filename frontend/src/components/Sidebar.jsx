@@ -1,4 +1,4 @@
-import { Calendar, Building2, CheckCircle, LogOut, Users, LayoutDashboard } from 'lucide-react';
+import { Calendar, Building2, CheckCircle, LogOut, LayoutDashboard } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import logo from '../assets/bookmyvenuelogo.png';
@@ -69,15 +69,6 @@ const Sidebar = ({ activePage = 'dashboard' }) => {
         {isAdmin && (
           <div className="pt-6">
             <p className="text-purple-300 text-sm uppercase tracking-wider px-4 mb-2">Admin</p>
-            <Link 
-              to="/users" 
-              className={`flex items-center gap-3 px-4 py-3 rounded-lg transition ${
-                activePage === 'users' ? 'bg-purple-500' : 'hover:bg-purple-500'
-              }`}
-            >
-              <Users size={20} />
-              <span>Users</span>
-            </Link>
             <Link 
               to="/manage-venues" 
               className={`flex items-center gap-3 px-4 py-3 rounded-lg transition ${

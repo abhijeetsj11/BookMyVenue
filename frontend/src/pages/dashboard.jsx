@@ -52,8 +52,13 @@ const Dashboard = () => {
       <div className="flex-1 p-4 overflow-y-auto h-full">
         <div className="flex justify-between items-center mb-4">
           <div>
+<<<<<<< HEAD
             <h1 className="text-4xl font-bold text-purple-600 mb-2">Hello, {user?.name || 'User'}!</h1>
             <p className="text-gray-600">{isStudent ? 'Stay updated with notices, events, and your bookings.' : 'Welcome to your venue management dashboard.'}</p>
+=======
+            <h1 className="text-4xl font-bold text-purple-600 mb-2">Hello, Bhosdi!</h1>
+            <p className="text-gray-600">Welcome to your venue management dashboard.</p>
+>>>>>>> 73fb040aa32404590717637d1fba301d9e488238
           </div>
           <div className="w-12 h-12 bg-gradient-to-br from-purple-400 to-blue-400 rounded-full" />
         </div>
