@@ -1,39 +1,97 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Search, Plus, Edit, Trash2, ChevronRight, ChevronLeft } from 'lucide-react';
 import Sidebar from '../components/Sidebar';
+import { venuesApi } from '../lib/api';
 
 const ManageVenue = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const [showAddModal, setShowAddModal] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+  const [venues, setVenues] = useState([]);
   const [formData, setFormData] = useState({
     name: '',
     type: '',
     capacity: '',
-    location: ''
+    location: {
+      building: '',
+      floor: '',
+      roomNumber: ''
+    }
   });
   const itemsPerPage = 6;
 
-  // Venue data with state
-  const [venues, setVenues] = useState([
-    { id: 1, name: 'Room 305', type: 'Classroom', capacity: 30, location: '1st Floor, Building A', icon: '📚' },
-    { id: 2, name: 'Auditorium', type: 'Auditorium', capacity: 150, location: 'Main Building', icon: '🎭' },
-    { id: 3, name: 'Chemistry Lab', type: 'Lab', capacity: 25, location: '2nd Floor, Science Center', icon: '🔬' },
-    { id: 4, name: 'Seminar Hall', type: 'Lecture Hall', capacity: 80, location: '2nd Floor, Building B', icon: '🎓' },
-    { id: 5, name: 'Computer Lab', type: 'Lab', capacity: 40, location: '1st Floor, Building C', icon: '💻' },
-    { id: 6, name: 'Library', type: 'Library', capacity: 100, location: 'Main Building', icon: '📖' },
-    { id: 7, name: 'Room 101', type: 'Classroom', capacity: 30, location: '1st Floor, Building A', icon: '📚' },
-    { id: 8, name: 'Room 102', type: 'Classroom', capacity: 40, location: '1st Floor, Building A', icon: '📚' },
-    { id: 9, name: 'Room 203', type: 'Classroom', capacity: 30, location: '2nd Floor, Building A', icon: '📚' },
-    { id: 10, name: 'Computer Lab 2', type: 'Lab', capacity: 35, location: '2nd Floor, Building C', icon: '💻' },
-  ]);
+  // Fetch venues on component mount
+  useEffect(() => {
+    fetchVenues();
+  }, []);
+
+  const fetchVenues = async () => {
+    try {
+      setLoading(true);
+      const response = await venuesApi.list();
+      if (response.success) {
+        setVenues(response.data);
+      }
+    } catch (err) {
+      console.error('Error fetching venues:', err);
+      setError('Failed to load venues');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Helper function to get icon based on type
+  const getIcon = (type) => {
+    const typeMap = {
+      'classroom': '📚',
+      'lab': '🔬',
+      'auditorium': '🎭',
+      'lecture-theater': '🎓',
+      'library': '📖',
+      'tutorial-room': '💡',
+      'other': '🏢'
+    };
+    return typeMap[type] || '🏢';
+  };
+
+  // Helper function to format location
+  const formatLocation = (location) => {
+    if (typeof location === 'string') return location;
+    if (location && typeof location === 'object') {
+      const parts = [];
+      if (location.floor) parts.push(`${location.floor}`);
+      if (location.building) parts.push(location.building);
+      return parts.join(', ') || 'N/A';
+    }
+    return 'N/A';
+  };
+
+  // Helper function to format type for display
+  const formatType = (type) => {
+    const typeMap = {
+      'classroom': 'Classroom',
+      'lab': 'Lab',
+      'auditorium': 'Auditorium',
+      'lecture-theater': 'Lecture Theater',
+      'library': 'Library',
+      'tutorial-room': 'Tutorial Room',
+      'other': 'Other'
+    };
+    return typeMap[type] || type;
+  };
 
   // Filter venues based on search query
-  const filteredVenues = venues.filter(venue =>
-    venue.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    venue.type.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    venue.location.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  const filteredVenues = venues.filter(venue => {
+    const locationStr = formatLocation(venue.location);
+    const typeStr = formatType(venue.type);
+    return (
+      venue.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      typeStr.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      locationStr.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+  });
 
   // Pagination
   const totalPages = Math.ceil(filteredVenues.length / itemsPerPage);
@@ -43,12 +101,27 @@ const ManageVenue = () => {
 
   const handleEdit = (id) => {
     console.log('Edit venue:', id);
-    // Handle edit logic
+    // TODO: Implement edit functionality
   };
 
-  const handleDelete = (id) => {
-    console.log('Delete venue:', id);
-    // Handle delete logic
+  const handleDelete = async (id) => {
+    if (!confirm('Are you sure you want to delete this venue?')) {
+      return;
+    }
+
+    try {
+      setLoading(true);
+      const response = await venuesApi.delete(id);
+      
+      if (response.success) {
+        await fetchVenues();
+      }
+    } catch (err) {
+      console.error('Error deleting venue:', err);
+      alert('Failed to delete venue: ' + (err.message || 'Unknown error'));
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleAddVenue = () => {
@@ -57,45 +130,62 @@ const ManageVenue = () => {
 
   const handleCloseModal = () => {
     setShowAddModal(false);
-    setFormData({ name: '', type: '', capacity: '', location: '' });
+    setFormData({ 
+      name: '', 
+      type: '', 
+      capacity: '', 
+      location: {
+        building: '',
+        floor: '',
+        roomNumber: ''
+      }
+    });
+    setError('');
   };
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
+    if (name.startsWith('location.')) {
+      const locationField = name.split('.')[1];
+      setFormData(prev => ({ 
+        ...prev, 
+        location: { ...prev.location, [locationField]: value }
+      }));
+    } else {
+      setFormData(prev => ({ ...prev, [name]: value }));
+    }
   };
 
-  const handleSubmitVenue = (e) => {
+  const handleSubmitVenue = async (e) => {
     e.preventDefault();
+    setLoading(true);
+    setError('');
     
-    // Get icon based on type
-    const getIcon = (type) => {
-      switch(type) {
-        case 'Classroom': return '📚';
-        case 'Lab': return '🔬';
-        case 'Auditorium': return '🎭';
-        case 'Lecture Hall': return '🎓';
-        case 'Library': return '📖';
-        case 'Seminar Hall': return '🎤';
-        default: return '🏢';
+    try {
+      // Prepare payload matching backend schema
+      const payload = {
+        name: formData.name,
+        type: formData.type,
+        capacity: parseInt(formData.capacity),
+        location: {
+          building: formData.location.building,
+          floor: formData.location.floor,
+          roomNumber: formData.location.roomNumber || formData.name
+        }
+      };
+
+      const response = await venuesApi.create(payload);
+      
+      if (response.success) {
+        await fetchVenues();
+        handleCloseModal();
       }
-    };
-
-    // Create new venue object
-    const newVenue = {
-      id: venues.length > 0 ? Math.max(...venues.map(v => v.id)) + 1 : 1,
-      name: formData.name,
-      type: formData.type,
-      capacity: parseInt(formData.capacity),
-      location: formData.location,
-      icon: getIcon(formData.type)
-    };
-
-    // Add venue to the list
-    setVenues([...venues, newVenue]);
-    
-    // Close modal and reset form
-    handleCloseModal();
+    } catch (err) {
+      console.error('Error creating venue:', err);
+      setError(err.message || 'Failed to create venue');
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -133,105 +223,117 @@ const ManageVenue = () => {
             </button>
           </div>
 
+          {/* Loading State */}
+          {loading && venues.length === 0 && (
+            <div className="text-center py-12">
+              <p className="text-gray-500">Loading venues...</p>
+            </div>
+          )}
+
           {/* Venues Table */}
-          <div className="bg-white rounded-xl shadow-sm overflow-hidden">
-            {/* Table Header */}
-            <div className="grid grid-cols-12 gap-4 px-6 py-4 bg-gray-50 border-b border-gray-200 text-sm font-semibold text-gray-600 uppercase tracking-wider">
-              <div className="col-span-4">Venue</div>
-              <div className="col-span-2">Capacity</div>
-              <div className="col-span-3">Location</div>
-              <div className="col-span-3 text-right">Actions</div>
-            </div>
+          {!loading || venues.length > 0 ? (
+            <div className="bg-white rounded-xl shadow-sm overflow-hidden">
+              {/* Table Header */}
+              <div className="grid grid-cols-12 gap-4 px-6 py-4 bg-gray-50 border-b border-gray-200 text-sm font-semibold text-gray-600 uppercase tracking-wider">
+                <div className="col-span-4">Venue</div>
+                <div className="col-span-2">Capacity</div>
+                <div className="col-span-3">Location</div>
+                <div className="col-span-3 text-right">Actions</div>
+              </div>
 
-            {/* Table Body */}
-            <div className="divide-y divide-gray-100">
-              {currentVenues.map((venue) => (
-                <div 
-                  key={venue.id}
-                  className="grid grid-cols-12 gap-4 px-6 py-4 hover:bg-purple-50 transition duration-150 items-center"
-                >
-                  {/* Venue Name & Type */}
-                  <div className="col-span-4 flex items-center gap-3">
-                    <div className="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center text-xl">
-                      {venue.icon}
+              {/* Table Body */}
+              <div className="divide-y divide-gray-100">
+                {currentVenues.map((venue) => (
+                  <div 
+                    key={venue._id}
+                    className="grid grid-cols-12 gap-4 px-6 py-4 hover:bg-purple-50 transition duration-150 items-center"
+                  >
+                    {/* Venue Name & Type */}
+                    <div className="col-span-4 flex items-center gap-3">
+                      <div className="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center text-xl">
+                        {getIcon(venue.type)}
+                      </div>
+                      <div>
+                        <div className="font-semibold text-gray-900">{venue.name}</div>
+                        <div className="text-sm text-gray-500">{formatType(venue.type)}</div>
+                      </div>
                     </div>
-                    <div>
-                      <div className="font-semibold text-gray-900">{venue.name}</div>
-                      <div className="text-sm text-gray-500">{venue.type}</div>
+
+                    {/* Capacity */}
+                    <div className="col-span-2 text-gray-700 font-medium">
+                      {venue.capacity}
+                    </div>
+
+                    {/* Location */}
+                    <div className="col-span-3 text-gray-600">
+                      {formatLocation(venue.location)}
+                    </div>
+
+                    {/* Actions */}
+                    <div className="col-span-3 flex items-center justify-end gap-3">
+                      <button
+                        onClick={() => handleEdit(venue._id)}
+                        className="flex items-center gap-2 bg-purple-500 hover:bg-purple-600 text-white px-4 py-2 rounded-lg transition duration-200 text-sm font-medium"
+                      >
+                        <Edit size={16} />
+                        <span>Edit</span>
+                      </button>
+                      <button
+                        onClick={() => handleDelete(venue._id)}
+                        disabled={loading}
+                        className="flex items-center gap-2 bg-red-100 hover:bg-red-200 text-red-600 px-4 py-2 rounded-lg transition duration-200 text-sm font-medium disabled:opacity-50"
+                      >
+                        <Trash2 size={16} />
+                        <span>Delete</span>
+                      </button>
+                      <ChevronRight size={20} className="text-gray-400" />
                     </div>
                   </div>
-
-                  {/* Capacity */}
-                  <div className="col-span-2 text-gray-700 font-medium">
-                    {venue.capacity}
-                  </div>
-
-                  {/* Location */}
-                  <div className="col-span-3 text-gray-600">
-                    {venue.location}
-                  </div>
-
-                  {/* Actions */}
-                  <div className="col-span-3 flex items-center justify-end gap-3">
-                    <button
-                      onClick={() => handleEdit(venue.id)}
-                      className="flex items-center gap-2 bg-purple-500 hover:bg-purple-600 text-white px-4 py-2 rounded-lg transition duration-200 text-sm font-medium"
-                    >
-                      <Edit size={16} />
-                      <span>Edit</span>
-                    </button>
-                    <button
-                      onClick={() => handleDelete(venue.id)}
-                      className="flex items-center gap-2 bg-red-100 hover:bg-red-200 text-red-600 px-4 py-2 rounded-lg transition duration-200 text-sm font-medium"
-                    >
-                      <Trash2 size={16} />
-                      <span>Delete</span>
-                    </button>
-                    <ChevronRight size={20} className="text-gray-400" />
-                  </div>
-                </div>
-              ))}
+                ))}
+              </div>
             </div>
-          </div>
+          ) : null}
 
           {/* Pagination */}
-          <div className="flex items-center justify-between mt-6">
-            <div className="text-gray-600">
-              Showing {startIndex + 1} to {Math.min(endIndex, filteredVenues.length)} of {filteredVenues.length} Venues
-            </div>
-            <div className="flex items-center gap-2">
-              <button
-                onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
-                disabled={currentPage === 1}
-                className="p-2 rounded-lg hover:bg-purple-100 disabled:opacity-50 disabled:cursor-not-allowed transition duration-200"
-              >
-                <ChevronLeft size={20} className="text-gray-600" />
-              </button>
-              {[...Array(totalPages)].map((_, index) => (
+          {filteredVenues.length > 0 && (
+            <div className="flex items-center justify-between mt-6">
+              <div className="text-gray-600">
+                Showing {startIndex + 1} to {Math.min(endIndex, filteredVenues.length)} of {filteredVenues.length} Venues
+              </div>
+              <div className="flex items-center gap-2">
                 <button
-                  key={index + 1}
-                  onClick={() => setCurrentPage(index + 1)}
-                  className={`w-10 h-10 rounded-lg font-medium transition duration-200 ${
-                    currentPage === index + 1
-                      ? 'bg-purple-500 text-white'
-                      : 'bg-white text-gray-600 hover:bg-purple-100'
-                  }`}
+                  onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+                  disabled={currentPage === 1}
+                  className="p-2 rounded-lg hover:bg-purple-100 disabled:opacity-50 disabled:cursor-not-allowed transition duration-200"
                 >
-                  {index + 1}
+                  <ChevronLeft size={20} className="text-gray-600" />
                 </button>
-              ))}
-              <button
-                onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
-                disabled={currentPage === totalPages}
-                className="p-2 rounded-lg hover:bg-purple-100 disabled:opacity-50 disabled:cursor-not-allowed transition duration-200"
-              >
-                <ChevronRight size={20} className="text-gray-600" />
-              </button>
+                {[...Array(totalPages)].map((_, index) => (
+                  <button
+                    key={index + 1}
+                    onClick={() => setCurrentPage(index + 1)}
+                    className={`w-10 h-10 rounded-lg font-medium transition duration-200 ${
+                      currentPage === index + 1
+                        ? 'bg-purple-500 text-white'
+                        : 'bg-white text-gray-600 hover:bg-purple-100'
+                    }`}
+                  >
+                    {index + 1}
+                  </button>
+                ))}
+                <button
+                  onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+                  disabled={currentPage === totalPages}
+                  className="p-2 rounded-lg hover:bg-purple-100 disabled:opacity-50 disabled:cursor-not-allowed transition duration-200"
+                >
+                  <ChevronRight size={20} className="text-gray-600" />
+                </button>
+              </div>
             </div>
-          </div>
+          )}
 
           {/* No results message */}
-          {filteredVenues.length === 0 && (
+          {filteredVenues.length === 0 && !loading && (
             <div className="text-center py-12 bg-white rounded-xl shadow-sm mt-8">
               <p className="text-gray-500 text-lg">No venues found matching your criteria.</p>
             </div>
@@ -254,6 +356,12 @@ const ManageVenue = () => {
                 </svg>
               </button>
             </div>
+
+            {error && (
+              <div className="mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded-lg">
+                {error}
+              </div>
+            )}
 
             <form onSubmit={handleSubmitVenue} className="space-y-4">
               <div>
@@ -283,12 +391,13 @@ const ManageVenue = () => {
                   className="w-full px-4 py-3 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
                 >
                   <option value="">Select type</option>
-                  <option value="Classroom">Classroom</option>
-                  <option value="Lab">Lab</option>
-                  <option value="Auditorium">Auditorium</option>
-                  <option value="Lecture Hall">Lecture Hall</option>
-                  <option value="Library">Library</option>
-                  <option value="Seminar Hall">Seminar Hall</option>
+                  <option value="classroom">Classroom</option>
+                  <option value="lab">Lab</option>
+                  <option value="auditorium">Auditorium</option>
+                  <option value="lecture-theater">Lecture Theater</option>
+                  <option value="library">Library</option>
+                  <option value="tutorial-room">Tutorial Room</option>
+                  <option value="other">Other</option>
                 </select>
               </div>
 
@@ -310,15 +419,44 @@ const ManageVenue = () => {
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Location
+                  Building
                 </label>
                 <input
                   type="text"
-                  name="location"
-                  value={formData.location}
+                  name="location.building"
+                  value={formData.location.building}
                   onChange={handleInputChange}
-                  placeholder="e.g., 1st Floor, Building A"
+                  placeholder="e.g., Building A"
                   required
+                  className="w-full px-4 py-3 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Floor
+                </label>
+                <input
+                  type="text"
+                  name="location.floor"
+                  value={formData.location.floor}
+                  onChange={handleInputChange}
+                  placeholder="e.g., 1st Floor"
+                  required
+                  className="w-full px-4 py-3 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Room Number (Optional)
+                </label>
+                <input
+                  type="text"
+                  name="location.roomNumber"
+                  value={formData.location.roomNumber}
+                  onChange={handleInputChange}
+                  placeholder="e.g., 305"
                   className="w-full px-4 py-3 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
                 />
               </div>
@@ -327,15 +465,17 @@ const ManageVenue = () => {
                 <button
                   type="button"
                   onClick={handleCloseModal}
-                  className="flex-1 px-6 py-3 rounded-lg border border-gray-300 text-gray-700 hover:bg-gray-50 transition font-medium"
+                  disabled={loading}
+                  className="flex-1 px-6 py-3 rounded-lg border border-gray-300 text-gray-700 hover:bg-gray-50 transition font-medium disabled:opacity-50"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="flex-1 px-6 py-3 rounded-lg bg-purple-500 hover:bg-purple-600 text-white transition font-medium shadow-md"
+                  disabled={loading}
+                  className="flex-1 px-6 py-3 rounded-lg bg-purple-500 hover:bg-purple-600 text-white transition font-medium shadow-md disabled:opacity-50"
                 >
-                  Add Venue
+                  {loading ? 'Adding...' : 'Add Venue'}
                 </button>
               </div>
             </form>

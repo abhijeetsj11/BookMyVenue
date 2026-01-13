@@ -21,10 +21,13 @@ export const setAuthToken = (token) => {
   else localStorage.setItem('token', token);
 };
 
+// API Base URL
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+
 export const apiRequest = async (path, { method = 'GET', body, token, headers } = {}) => {
   const finalToken = token ?? getAuthToken();
 
-  const res = await fetch(path, {
+  const res = await fetch(`${API_BASE_URL}${path}`, {
     method,
     headers: {
       'Content-Type': 'application/json',
@@ -51,7 +54,14 @@ export const authApi = {
 };
 
 export const venuesApi = {
-  list: () => apiRequest('/api/venues'),
+  list: (params) => {
+    const query = params ? `?${new URLSearchParams(params)}` : '';
+    return apiRequest(`/api/venues${query}`);
+  },
+  get: (id) => apiRequest(`/api/venues/${id}`),
+  create: (payload) => apiRequest('/api/venues', { method: 'POST', body: payload }),
+  update: (id, payload) => apiRequest(`/api/venues/${id}`, { method: 'PUT', body: payload }),
+  delete: (id) => apiRequest(`/api/venues/${id}`, { method: 'DELETE' }),
 };
 
 export const bookingsApi = {
