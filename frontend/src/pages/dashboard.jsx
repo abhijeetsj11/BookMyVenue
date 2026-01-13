@@ -46,12 +46,11 @@ const Dashboard = () => {
       <Sidebar activePage="dashboard" />
 
       <div className="flex-1 p-4 overflow-y-auto h-full">
-        <div className="flex justify-between items-center mb-4">
+        <div className="mb-4">
           <div>
             <h1 className="text-4xl font-bold text-purple-600 mb-2">Hello, {user?.name || 'User'}!</h1>
             <p className="text-gray-600">{isStudent ? 'Stay updated with notices, events, and your bookings.' : 'Welcome to your venue management dashboard.'}</p>
           </div>
-          <div className="w-12 h-12 bg-gradient-to-br from-purple-400 to-blue-400 rounded-full" />
         </div>
 
         {/* Stats Cards - shown only for non-student roles */}

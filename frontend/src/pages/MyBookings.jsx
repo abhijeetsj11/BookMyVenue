@@ -110,19 +110,10 @@ const MyBookings = () => {
       <div className="flex-1 overflow-auto">
         <div className="p-8">
           {/* Header Section */}
-          <div className="flex items-start justify-between mb-2">
+          <div className="mb-2">
             <div>
               <h1 className="text-4xl font-bold text-purple-400 mb-2">My Bookings</h1>
               <p className="text-gray-500 text-sm">Track your extra class and event booking requests.</p>
-            </div>
-            <div className="flex items-center gap-4">
-              <div className="w-12 h-12 bg-purple-100 rounded-full overflow-hidden">
-                <img 
-                  src="https://via.placeholder.com/48" 
-                  alt="User" 
-                  className="w-full h-full object-cover"
-                />
-              </div>
             </div>
           </div>
 

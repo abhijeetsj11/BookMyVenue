@@ -44,17 +44,8 @@ const Venues = () => {
       <div className="flex-1 overflow-auto">
         <div className="p-8">
           {/* Header Section */}
-          <div className="flex items-center justify-between mb-8">
+          <div className="mb-8">
             <h1 className="text-5xl font-bold text-purple-700">Venues</h1>
-            <div className="flex items-center gap-4">
-              <div className="w-12 h-12 bg-purple-100 rounded-full overflow-hidden">
-                <img 
-                  src="https://via.placeholder.com/48" 
-                  alt="User" 
-                  className="w-full h-full object-cover"
-                />
-              </div>
-            </div>
           </div>
 
           {/* Search */}
