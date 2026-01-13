@@ -14,8 +14,8 @@ const ManageVenue = () => {
   });
   const itemsPerPage = 6;
 
-  // Sample venue data
-  const venues = [
+  // Venue data with state
+  const [venues, setVenues] = useState([
     { id: 1, name: 'Room 305', type: 'Classroom', capacity: 30, location: '1st Floor, Building A', icon: '📚' },
     { id: 2, name: 'Auditorium', type: 'Auditorium', capacity: 150, location: 'Main Building', icon: '🎭' },
     { id: 3, name: 'Chemistry Lab', type: 'Lab', capacity: 25, location: '2nd Floor, Science Center', icon: '🔬' },
@@ -26,7 +26,7 @@ const ManageVenue = () => {
     { id: 8, name: 'Room 102', type: 'Classroom', capacity: 40, location: '1st Floor, Building A', icon: '📚' },
     { id: 9, name: 'Room 203', type: 'Classroom', capacity: 30, location: '2nd Floor, Building A', icon: '📚' },
     { id: 10, name: 'Computer Lab 2', type: 'Lab', capacity: 35, location: '2nd Floor, Building C', icon: '💻' },
-  ];
+  ]);
 
   // Filter venues based on search query
   const filteredVenues = venues.filter(venue =>
@@ -67,8 +67,34 @@ const ManageVenue = () => {
 
   const handleSubmitVenue = (e) => {
     e.preventDefault();
-    console.log('Adding venue:', formData);
-    // TODO: Add API call here
+    
+    // Get icon based on type
+    const getIcon = (type) => {
+      switch(type) {
+        case 'Classroom': return '📚';
+        case 'Lab': return '🔬';
+        case 'Auditorium': return '🎭';
+        case 'Lecture Hall': return '🎓';
+        case 'Library': return '📖';
+        case 'Seminar Hall': return '🎤';
+        default: return '🏢';
+      }
+    };
+
+    // Create new venue object
+    const newVenue = {
+      id: venues.length > 0 ? Math.max(...venues.map(v => v.id)) + 1 : 1,
+      name: formData.name,
+      type: formData.type,
+      capacity: parseInt(formData.capacity),
+      location: formData.location,
+      icon: getIcon(formData.type)
+    };
+
+    // Add venue to the list
+    setVenues([...venues, newVenue]);
+    
+    // Close modal and reset form
     handleCloseModal();
   };
 
