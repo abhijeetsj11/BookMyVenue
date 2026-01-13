@@ -39,11 +39,7 @@ const Dashboard = () => {
     { id: 3, title: 'Cultural Committee Meeting', venue: 'Seminar Hall', time: '4:00 PM - 5:30 PM', organizer: 'Cultural Committee', status: 'Upcoming' }
   ];
 
-  const myBookings = [
-    { venue: 'Lab 305', date: 'Apr 24, 2024', time: '3:00 PM - 5:00 PM', status: 'Confirmed', statusColor: 'text-green-500' },
-    { venue: 'Seminar Hall', date: 'Apr 25, 2024', time: '10:00 AM - 12:00 PM', status: 'Pending', statusColor: 'text-yellow-500' },
-    { venue: 'Room 102', date: 'Apr 26, 2024', time: '2:00 PM - 4:00 PM', status: 'Confirmed', statusColor: 'text-green-500' }
-  ];
+  // removed student-only `myBookings` (not used in UI)
 
   return (
     <div className="flex h-screen w-full bg-gradient-to-br from-purple-50 to-blue-50 overflow-hidden">
@@ -52,16 +48,30 @@ const Dashboard = () => {
       <div className="flex-1 p-4 overflow-y-auto h-full">
         <div className="flex justify-between items-center mb-4">
           <div>
-<<<<<<< HEAD
             <h1 className="text-4xl font-bold text-purple-600 mb-2">Hello, {user?.name || 'User'}!</h1>
             <p className="text-gray-600">{isStudent ? 'Stay updated with notices, events, and your bookings.' : 'Welcome to your venue management dashboard.'}</p>
-=======
-            <h1 className="text-4xl font-bold text-purple-600 mb-2">Hello, Bhosdi!</h1>
-            <p className="text-gray-600">Welcome to your venue management dashboard.</p>
->>>>>>> 73fb040aa32404590717637d1fba301d9e488238
           </div>
           <div className="w-12 h-12 bg-gradient-to-br from-purple-400 to-blue-400 rounded-full" />
         </div>
+
+        {/* Stats Cards - shown only for non-student roles */}
+        {!isStudent && (
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+            {stats.map((stat, index) => (
+              <div key={index} className={`${stat.color} rounded-2xl p-4 text-white shadow-lg`}>
+                <div className="flex justify-between items-start mb-4">
+                  <div>
+                    <p className="text-white/90 font-medium mb-2">{stat.title}</p>
+                    <p className="text-4xl font-bold">{stat.value}</p>
+                  </div>
+                  <div className="bg-white/20 p-3 rounded-lg">
+                    <stat.icon size={32} />
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
 
         {isStudent ? (
           <>
@@ -119,22 +129,6 @@ const Dashboard = () => {
           </>
         ) : (
           <>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
-              {stats.map((stat, index) => (
-                <div key={index} className={`${stat.color} rounded-2xl p-4 text-white shadow-lg`}>
-                  <div className="flex justify-between items-start mb-4">
-                    <div>
-                      <p className="text-white/90 font-medium mb-2">{stat.title}</p>
-                      <p className="text-4xl font-bold">{stat.value}</p>
-                    </div>
-                    <div className="bg-white/20 p-3 rounded-lg">
-                      <stat.icon size={32} />
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-2">
               <div className="bg-white rounded-2xl p-4 shadow-lg">
                 <h2 className="text-xl font-bold text-purple-600 mb-4">Upcoming Schedule</h2>
