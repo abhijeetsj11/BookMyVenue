@@ -1,41 +1,54 @@
-import { useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Search, Plus, ChevronDown } from 'lucide-react';
 import Sidebar from '../components/Sidebar';
 import VenueCard from '../components/VenueCard';
+import { venuesApi } from '../lib/api';
 
 const Venues = () => {
   const [activeFilter, setActiveFilter] = useState('All');
   const [searchQuery, setSearchQuery] = useState('');
+  const [venues, setVenues] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
 
-  // Sample venue data
-  const venues = [
-    { id: 1, name: 'Room 101', capacity: 30, status: 'Available', type: 'classroom' },
-    { id: 2, name: 'Room 102', capacity: 40, status: 'Occupied', type: 'classroom' },
-    { id: 3, name: 'Room 203', capacity: 30, status: 'Available', type: 'classroom' },
-    { id: 4, name: 'Auditorium', capacity: 200, status: 'Available', type: 'auditorium' },
-    { id: 5, name: 'Computer Lab 1', capacity: 40, status: 'Available', type: 'lab' },
-    { id: 6, name: 'Computer Lab 2', capacity: 30, status: 'Occupied', type: 'lab' },
-    { id: 7, name: 'Lecture Theater A', capacity: 100, status: 'Available', type: 'lecture-theater' },
-    { id: 8, name: 'Lecture Theater B', capacity: 120, status: 'Occupied', type: 'lecture-theater' },
-    { id: 9, name: 'Tutorial Room 1', capacity: 15, status: 'Available', type: 'tutorial-room' },
-    { id: 10, name: 'Tutorial Room 2', capacity: 20, status: 'Available', type: 'tutorial-room' },
-    { id: 11, name: 'Science Lab', capacity: 35, status: 'Occupied', type: 'lab' },
-    { id: 12, name: 'Tutorial Room 3', capacity: 18, status: 'Available', type: 'tutorial-room' },
-  ];
+  useEffect(() => {
+    const load = async () => {
+      setLoading(true);
+      setError('');
+
+      try {
+        const res = await venuesApi.list();
+        setVenues(res?.data || []);
+      } catch (e) {
+        setError(e?.message || 'Failed to load venues');
+        setVenues([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    load();
+  }, []);
 
   const filterCategories = ['All', 'Classroom', 'Lab', 'Auditorium', 'Lecture Theater', 'Tutorial Room'];
 
-  const filteredVenues = venues.filter(venue => {
-    const matchesSearch = venue.name.toLowerCase().includes(searchQuery.toLowerCase());
-    const matchesFilter = activeFilter === 'All' || 
-      (activeFilter === 'Classroom' && venue.type === 'classroom') ||
-      (activeFilter === 'Lab' && venue.type === 'lab') ||
-      (activeFilter === 'Auditorium' && venue.type === 'auditorium') ||
-      (activeFilter === 'Lecture Theater' && venue.type === 'lecture-theater') ||
-      (activeFilter === 'Tutorial Room' && venue.type === 'tutorial-room');
-    
-    return matchesSearch && matchesFilter;
-  });
+  const filteredVenues = useMemo(() => {
+    return venues.filter((venue) => {
+      const name = venue?.name || '';
+      const type = venue?.type;
+
+      const matchesSearch = name.toLowerCase().includes(searchQuery.toLowerCase());
+      const matchesFilter =
+        activeFilter === 'All' ||
+        (activeFilter === 'Classroom' && type === 'classroom') ||
+        (activeFilter === 'Lab' && type === 'lab') ||
+        (activeFilter === 'Auditorium' && type === 'auditorium') ||
+        (activeFilter === 'Lecture Theater' && type === 'lecture-theater') ||
+        (activeFilter === 'Tutorial Room' && type === 'tutorial-room');
+
+      return matchesSearch && matchesFilter;
+    });
+  }, [venues, searchQuery, activeFilter]);
 
   return (
     <div className="flex h-screen bg-gray-50">
@@ -91,10 +104,21 @@ const Venues = () => {
           </div>
 
           {/* Venue Cards Grid */}
+          {error ? (
+            <div className="mb-6 text-sm text-red-600 bg-red-50 border border-red-100 rounded-lg px-4 py-3">
+              {error}
+            </div>
+          ) : null}
+
+          {loading ? (
+            <div className="text-center py-12">
+              <p className="text-gray-500 text-lg">Loading venues…</p>
+            </div>
+          ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {filteredVenues.map(venue => (
               <VenueCard
-                key={venue.id}
+                key={venue._id}
                 name={venue.name}
                 capacity={venue.capacity}
                 status={venue.status}
@@ -102,9 +126,10 @@ const Venues = () => {
               />
             ))}
           </div>
+          )}
 
           {/* No results message */}
-          {filteredVenues.length === 0 && (
+          {!loading && filteredVenues.length === 0 && (
             <div className="text-center py-12">
               <p className="text-gray-500 text-lg">No venues found matching your criteria.</p>
             </div>

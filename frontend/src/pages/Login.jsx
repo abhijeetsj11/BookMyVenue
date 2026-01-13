@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import logo from '../assets/bookmyvenuelogo.png';
+import { authApi } from '../lib/api';
 
 const Login = () => {
     const [email, setEmail] = useState('');
@@ -9,22 +10,33 @@ const Login = () => {
     const [role, setRole] = useState('student');
     const [rememberMe, setRememberMe] = useState(false);
     const [showPassword, setShowPassword] = useState(false);
+    const [submitting, setSubmitting] = useState(false);
+    const [error, setError] = useState('');
     const navigate = useNavigate();
     const { login } = useAuth();
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        
-        // TODO: Replace with actual API call
-        const userData = {
-            email,
-            role, // 'admin', 'staff', or 'student'
-            name: email.split('@')[0],
-            id: Math.random().toString(36).substr(2, 9)
-        };
+        setError('');
+        setSubmitting(true);
 
-        login(userData);
-        navigate('/dashboard');
+        try {
+            const res = await authApi.login(email, password);
+            const userData = res?.data;
+            const token = res?.token;
+
+            if (!token || !userData) {
+                throw new Error('Login failed: missing token or user');
+            }
+
+            // Role comes from backend account; UI role toggle is kept for now but ignored.
+            login({ user: userData, token });
+            navigate('/dashboard');
+        } catch (err) {
+            setError(err?.message || 'Login failed');
+        } finally {
+            setSubmitting(false);
+        }
     };
 
     return (
@@ -189,11 +201,17 @@ const Login = () => {
 
                         {/* Submit Button */}
                         <div>
+                            {error ? (
+                                <div className="mb-3 text-sm text-red-600 bg-red-50 border border-red-100 rounded-lg px-3 py-2">
+                                    {error}
+                                </div>
+                            ) : null}
                             <button
                                 type="submit"
+                                disabled={submitting}
                                 className="group relative w-full flex justify-center py-2.5 px-4 border border-transparent text-base font-medium rounded-full text-white bg-purple-600 hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500 transition-colors"
                             >
-                                Log in
+                                {submitting ? 'Logging in…' : 'Log in'}
                             </button>
                         </div>
                     </form>

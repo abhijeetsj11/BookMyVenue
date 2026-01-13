@@ -1,19 +1,96 @@
-import { useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Calendar, Clock, MapPin, FileText, Send } from 'lucide-react';
 import Sidebar from '../components/Sidebar';
+import { bookingsApi, venuesApi } from '../lib/api';
 
 const Bookvenue = () => {
+  const [venues, setVenues] = useState([]);
   const [venue, setVenue] = useState('');
   const [date, setDate] = useState('');
   const [startTime, setStartTime] = useState('09:00');
   const [endTime, setEndTime] = useState('11:00');
-  const [purpose, setPurpose] = useState('Extra Class');
+  const [purpose, setPurpose] = useState('class');
+  const [title, setTitle] = useState('');
+  const [attendees, setAttendees] = useState(1);
   const [notes, setNotes] = useState('');
+  const [loadingVenues, setLoadingVenues] = useState(true);
+  const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState('');
+  const [success, setSuccess] = useState('');
 
-  const handleSubmit = (e) => {
+  useEffect(() => {
+    const load = async () => {
+      setLoadingVenues(true);
+      setError('');
+      try {
+        const res = await venuesApi.list();
+        setVenues(res?.data || []);
+      } catch (e) {
+        setError(e?.message || 'Failed to load venues');
+        setVenues([]);
+      } finally {
+        setLoadingVenues(false);
+      }
+    };
+
+    load();
+  }, []);
+
+  const purposeOptions = useMemo(
+    () => [
+      { value: 'class', label: 'Class' },
+      { value: 'meeting', label: 'Meeting' },
+      { value: 'seminar', label: 'Seminar' },
+      { value: 'workshop', label: 'Workshop' },
+      { value: 'exam', label: 'Exam' },
+      { value: 'event', label: 'Event' },
+      { value: 'other', label: 'Other' },
+    ],
+    []
+  );
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log('Request submitted', { venue, date, startTime, endTime, purpose, notes });
-    // TODO: wire to API
+    setError('');
+    setSuccess('');
+
+    if (!venue) return setError('Please select a venue');
+    if (!date) return setError('Please select a date');
+    if (!title.trim()) return setError('Please enter a booking title');
+    if (!attendees || Number(attendees) < 1) return setError('Attendees must be at least 1');
+
+    const start = new Date(`${date}T${startTime}`);
+    const end = new Date(`${date}T${endTime}`);
+
+    if (Number.isNaN(start.getTime()) || Number.isNaN(end.getTime())) {
+      return setError('Invalid date/time');
+    }
+    if (end <= start) {
+      return setError('End time must be after start time');
+    }
+
+    setSubmitting(true);
+    try {
+      await bookingsApi.create({
+        venue,
+        title: title.trim(),
+        purpose,
+        attendees: Number(attendees),
+        startTime: start.toISOString(),
+        endTime: end.toISOString(),
+        notes: notes?.trim() || undefined,
+      });
+
+      setSuccess('Booking request submitted successfully');
+      setVenue('');
+      setTitle('');
+      setAttendees(1);
+      setNotes('');
+    } catch (err) {
+      setError(err?.message || 'Failed to submit booking');
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   return (
@@ -32,6 +109,17 @@ const Bookvenue = () => {
 
           <section className="bg-white shadow-lg rounded-2xl p-6">
             <form onSubmit={handleSubmit} className="space-y-6">
+              {error ? (
+                <div className="text-sm text-red-600 bg-red-50 border border-red-100 rounded-lg px-4 py-3">
+                  {error}
+                </div>
+              ) : null}
+              {success ? (
+                <div className="text-sm text-green-700 bg-green-50 border border-green-100 rounded-lg px-4 py-3">
+                  {success}
+                </div>
+              ) : null}
+
               {/* Select Venue */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">Select Venue</label>
@@ -41,13 +129,39 @@ const Bookvenue = () => {
                     value={venue}
                     onChange={(e) => setVenue(e.target.value)}
                     className="flex-1 py-3 px-4 border border-gray-200 rounded-lg bg-gray-50"
+                    disabled={loadingVenues}
                   >
                     <option value="">Select Venue</option>
-                    <option value="Auditorium">Auditorium</option>
-                    <option value="Seminar Hall">Seminar Hall</option>
-                    <option value="Room 203">Room 203</option>
-                    <option value="Library">Library</option>
+                    {venues.map((v) => (
+                      <option key={v._id} value={v._id}>
+                        {v.name} ({v.type}, cap {v.capacity})
+                      </option>
+                    ))}
                   </select>
+                </div>
+              </div>
+
+              {/* Title & Attendees */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Title</label>
+                  <input
+                    type="text"
+                    value={title}
+                    onChange={(e) => setTitle(e.target.value)}
+                    className="w-full py-3 px-4 border border-gray-200 rounded-lg bg-gray-50"
+                    placeholder="e.g., Extra Class - DBMS"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Attendees</label>
+                  <input
+                    type="number"
+                    min={1}
+                    value={attendees}
+                    onChange={(e) => setAttendees(e.target.value)}
+                    className="w-full py-3 px-4 border border-gray-200 rounded-lg bg-gray-50"
+                  />
                 </div>
               </div>
 
@@ -103,10 +217,11 @@ const Bookvenue = () => {
                     onChange={(e) => setPurpose(e.target.value)}
                     className="flex-1 py-3 px-4 border border-gray-200 rounded-lg bg-gray-50"
                   >
-                    <option>Extra Class</option>
-                    <option>Guest Lecture</option>
-                    <option>Workshop</option>
-                    <option>Meeting</option>
+                    {purposeOptions.map((p) => (
+                      <option key={p.value} value={p.value}>
+                        {p.label}
+                      </option>
+                    ))}
                   </select>
                 </div>
               </div>
@@ -126,10 +241,11 @@ const Bookvenue = () => {
               <div className="pt-2">
                 <button
                   type="submit"
+                  disabled={submitting}
                   className="inline-flex items-center gap-2 bg-purple-600 text-white py-3 px-6 rounded-full hover:bg-purple-700 transition"
                 >
                   <Send size={16} />
-                  Submit Request
+                  {submitting ? 'Submitting…' : 'Submit Request'}
                 </button>
               </div>
             </form>

@@ -1,6 +1,6 @@
 import { Monitor, Users } from 'lucide-react';
 
-const VenueCard = ({ name, capacity, status, type, illustration }) => {
+const VenueCard = ({ name, capacity, status, type }) => {
   const statusColor = status === 'Available' ? 'text-green-500' : 'text-orange-500';
   const statusDot = status === 'Available' ? 'bg-green-500' : 'bg-orange-500';
   

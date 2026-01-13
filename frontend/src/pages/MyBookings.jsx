@@ -1,90 +1,82 @@
-import { useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Building2 } from 'lucide-react';
 import Sidebar from '../components/Sidebar';
+import { bookingsApi } from '../lib/api';
 
 const MyBookings = () => {
   const [activeFilter, setActiveFilter] = useState('All');
+  const [bookings, setBookings] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
 
-  // Sample bookings data
-  const bookings = [
-    {
-      id: 1,
-      venue: 'Room 101',
-      subtitle: 'Classroom',
-      date: 'Apr 22, 2024',
-      time: '10:00 AM - 11:00 AM',
-      purpose: 'Extra Class',
-      status: 'Pending',
-      purposeColor: 'orange'
-    },
-    {
-      id: 2,
-      venue: 'Computer Lab 1',
-      subtitle: 'Lab Session',
-      date: 'Apr 20, 2024',
-      time: '3:00 PM - 5:00 PM',
-      purpose: 'Group Study',
-      status: 'Approved',
-      purposeColor: 'green'
-    },
-    {
-      id: 3,
-      venue: 'Auditorium',
-      subtitle: 'Guest Lecture',
-      date: 'Apr 18, 2024',
-      time: '2:00 PM - 4:00 PM',
-      purpose: 'Guest Lecture',
-      status: 'Rejected',
-      purposeColor: 'green'
-    },
-    {
-      id: 4,
-      venue: 'Lecture Theater A',
-      subtitle: 'Workshop',
-      date: 'Apr 17, 2024',
-      time: '9:00 AM - 11:00 AM',
-      purpose: 'Workshop',
-      status: 'Approved',
-      purposeColor: 'orange'
-    },
-    {
-      id: 5,
-      venue: 'Science Lab',
-      subtitle: 'Lab Practical',
-      date: 'Apr 15, 2024',
-      time: '11:00 AM - 12:00 PM',
-      purpose: 'Extra Class',
-      status: 'Rejected',
-      purposeColor: 'orange'
-    },
-    {
-      id: 6,
-      venue: 'Tutorial Room 1',
-      subtitle: 'Study Session',
-      date: 'Apr 14, 2024',
-      time: '2:00 PM - 3:30 PM',
-      purpose: 'Group Study',
-      status: 'Approved',
-      purposeColor: 'green'
-    },
-    {
-      id: 7,
-      venue: 'Room 203',
-      subtitle: 'Classroom',
-      date: 'Apr 12, 2024',
-      time: '1:00 PM - 2:00 PM',
-      purpose: 'Extra Class',
-      status: 'Pending',
-      purposeColor: 'orange'
-    },
-  ];
+  useEffect(() => {
+    const load = async () => {
+      setLoading(true);
+      setError('');
+      try {
+        const res = await bookingsApi.myBookings();
+        setBookings(res?.data || []);
+      } catch (e) {
+        setError(e?.message || 'Failed to load bookings');
+        setBookings([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    load();
+  }, []);
 
   const filterCategories = ['All', 'Pending', 'Approved', 'Rejected'];
 
-  const filteredBookings = bookings.filter(booking => {
-    if (activeFilter === 'All') return true;
-    return booking.status === activeFilter;
-  });
+  const formatStatus = (status) => {
+    if (!status) return 'Unknown';
+    return status.charAt(0).toUpperCase() + status.slice(1);
+  };
+
+  const formatType = (type) => {
+    if (!type) return '';
+    return type
+      .split('-')
+      .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
+      .join(' ');
+  };
+
+  const formatPurpose = (purpose) => {
+    if (!purpose) return '';
+    return purpose.charAt(0).toUpperCase() + purpose.slice(1);
+  };
+
+  const filteredBookings = useMemo(() => {
+    return bookings
+      .map((b) => {
+        const start = b?.startTime ? new Date(b.startTime) : null;
+        const end = b?.endTime ? new Date(b.endTime) : null;
+
+        const date = start ? start.toLocaleDateString() : '';
+        const time =
+          start && end
+            ? `${start.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} - ${end.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`
+            : '';
+
+        const statusLabel = formatStatus(b?.status);
+
+        return {
+          id: b?._id,
+          venue: b?.venue?.name || 'Unknown Venue',
+          subtitle: formatType(b?.venue?.type),
+          date,
+          time,
+          purpose: formatPurpose(b?.purpose),
+          status: statusLabel,
+          purposeColor: b?.status === 'approved' ? 'green' : 'orange',
+        };
+      })
+      .filter((booking) => {
+        if (activeFilter === 'All') return true;
+        return booking.status === activeFilter;
+      });
+  }, [bookings, activeFilter]);
 
   const getStatusStyle = (status) => {
     switch(status) {
@@ -94,6 +86,10 @@ const MyBookings = () => {
         return 'bg-green-100 text-green-600';
       case 'Rejected':
         return 'bg-red-100 text-red-600';
+      case 'Cancelled':
+        return 'bg-gray-100 text-gray-600';
+      case 'Completed':
+        return 'bg-blue-100 text-blue-600';
       default:
         return 'bg-gray-100 text-gray-600';
     }
@@ -144,6 +140,12 @@ const MyBookings = () => {
           </div>
 
           {/* Bookings Table */}
+          {error ? (
+            <div className="mb-6 text-sm text-red-600 bg-red-50 border border-red-100 rounded-lg px-4 py-3">
+              {error}
+            </div>
+          ) : null}
+
           <div className="bg-white rounded-2xl shadow-sm overflow-hidden">
             {/* Table Header */}
             <div className="grid grid-cols-4 gap-4 px-6 py-4 bg-gray-50 border-b border-gray-100">
@@ -155,8 +157,11 @@ const MyBookings = () => {
 
             {/* Table Body */}
             <div className="divide-y divide-gray-100">
-              {filteredBookings.map(booking => (
-                <div key={booking.id} className="grid grid-cols-4 gap-4 px-6 py-4 hover:bg-gray-50 transition duration-150">
+              {loading ? (
+                <div className="px-6 py-8 text-center text-gray-500">Loading bookings…</div>
+              ) : (
+                filteredBookings.map(booking => (
+                  <div key={booking.id} className="grid grid-cols-4 gap-4 px-6 py-4 hover:bg-gray-50 transition duration-150">
                   {/* Venue */}
                   <div className="flex items-center gap-3">
                     <div className="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center flex-shrink-0">
@@ -186,13 +191,14 @@ const MyBookings = () => {
                       {booking.status}
                     </span>
                   </div>
-                </div>
-              ))}
+                  </div>
+                ))
+              )}
             </div>
           </div>
 
           {/* No results message */}
-          {filteredBookings.length === 0 && (
+          {!loading && filteredBookings.length === 0 && (
             <div className="text-center py-12 bg-white rounded-2xl">
               <p className="text-gray-500 text-lg">No bookings found for this filter.</p>
             </div>
