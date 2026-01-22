@@ -13,23 +13,13 @@ connectDB();
 const app = express();
 
 // Middleware
-const allowedOrigins = [
-  process.env.CLIENT_URL,
-  'http://localhost:5173',
-  'http://localhost:5174',
-].filter(Boolean);
+const corsOptions = {
+  origin: process.env.CLIENT_URL || 'http://localhost:5174',
+  credentials: true,
+  optionsSuccessStatus: 200
+};
 
-app.use(
-  cors({
-    origin: (origin, callback) => {
-      // Allow non-browser requests (no Origin header)
-      if (!origin) return callback(null, true);
-      if (allowedOrigins.includes(origin)) return callback(null, true);
-      return callback(new Error(`CORS blocked origin: ${origin}`));
-    },
-    credentials: true,
-  })
-);
+app.use(cors(corsOptions));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(morgan('dev'));
@@ -59,3 +49,6 @@ const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
+
+// At the end of file, export for Vercel
+module.exports = app;
