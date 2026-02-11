@@ -192,18 +192,18 @@ const ManageVenue = () => {
     <div className="flex h-screen bg-gray-50">
       <Sidebar activePage="manage-venues" />
       
-      <div className="flex-1 overflow-auto">
-        <div className="p-8">
+      <div className="flex-1 overflow-auto pt-20 lg:pt-0">
+        <div className="p-4 sm:p-6 lg:p-8">
           {/* Header Section */}
           <div className="mb-2">
             <div>
-              <h1 className="text-4xl font-bold text-purple-700 mb-2">Manage Venues</h1>
+              <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-purple-700 mb-2">Manage Venues</h1>
               <p className="text-gray-600">Add, edit, or remove venues from your campus venue management system.</p>
             </div>
           </div>
 
           {/* Search and Add Button */}
-          <div className="flex items-center gap-4 my-8">
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:gap-4 my-6 sm:my-8">
             <div className="flex-1 relative">
               <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
               <input
@@ -216,7 +216,7 @@ const ManageVenue = () => {
             </div>
             <button 
               onClick={handleAddVenue}
-              className="flex items-center gap-2 bg-purple-500 hover:bg-purple-600 text-white px-6 py-3 rounded-lg transition duration-200 font-medium shadow-md"
+              className="flex items-center justify-center gap-2 bg-purple-500 hover:bg-purple-600 text-white px-4 sm:px-6 py-3 rounded-lg transition duration-200 font-medium shadow-md whitespace-nowrap"
             >
               <Plus size={20} />
               <span>Add Venue</span>
@@ -233,8 +233,8 @@ const ManageVenue = () => {
           {/* Venues Table */}
           {!loading || venues.length > 0 ? (
             <div className="bg-white rounded-xl shadow-sm overflow-hidden">
-              {/* Table Header */}
-              <div className="grid grid-cols-12 gap-4 px-6 py-4 bg-gray-50 border-b border-gray-200 text-sm font-semibold text-gray-600 uppercase tracking-wider">
+              {/* Table Header - Hidden on mobile */}
+              <div className="hidden md:grid grid-cols-12 gap-4 px-6 py-4 bg-gray-50 border-b border-gray-200 text-sm font-semibold text-gray-600 uppercase tracking-wider">
                 <div className="col-span-4">Venue</div>
                 <div className="col-span-2">Capacity</div>
                 <div className="col-span-3">Location</div>
@@ -244,10 +244,9 @@ const ManageVenue = () => {
               {/* Table Body */}
               <div className="divide-y divide-gray-100">
                 {currentVenues.map((venue) => (
-                  <div 
-                    key={venue._id}
-                    className="grid grid-cols-12 gap-4 px-6 py-4 hover:bg-purple-50 transition duration-150 items-center"
-                  >
+                  <div key={venue._id}>
+                    {/* Desktop View */}
+                    <div className="hidden md:grid grid-cols-12 gap-4 px-6 py-4 hover:bg-purple-50 transition duration-150 items-center">
                     {/* Venue Name & Type */}
                     <div className="col-span-4 flex items-center gap-3">
                       <div className="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center text-xl">
@@ -289,6 +288,47 @@ const ManageVenue = () => {
                       <ChevronRight size={20} className="text-gray-400" />
                     </div>
                   </div>
+
+                  {/* Mobile View - Card Format */}
+                  <div className="md:hidden p-4 hover:bg-purple-50 transition">
+                    <div className="flex items-start gap-3 mb-3">
+                      <div className="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center text-2xl flex-shrink-0">
+                        {getIcon(venue.type)}
+                      </div>
+                      <div className="flex-1">
+                        <div className="font-semibold text-gray-900 mb-1">{venue.name}</div>
+                        <div className="text-sm text-gray-500">{formatType(venue.type)}</div>
+                      </div>
+                    </div>
+                    <div className="space-y-2 mb-3">
+                      <div className="flex items-center gap-2 text-sm">
+                        <span className="text-gray-500">Capacity:</span>
+                        <span className="text-gray-800 font-medium">{venue.capacity}</span>
+                      </div>
+                      <div className="flex items-center gap-2 text-sm">
+                        <span className="text-gray-500">Location:</span>
+                        <span className="text-gray-700">{formatLocation(venue.location)}</span>
+                      </div>
+                    </div>
+                    <div className="flex gap-2">
+                      <button
+                        onClick={() => handleEdit(venue._id)}
+                        className="flex-1 flex items-center justify-center gap-2 bg-purple-500 hover:bg-purple-600 text-white px-3 py-2 rounded-lg transition text-sm font-medium"
+                      >
+                        <Edit size={16} />
+                        <span>Edit</span>
+                      </button>
+                      <button
+                        onClick={() => handleDelete(venue._id)}
+                        disabled={loading}
+                        className="flex-1 flex items-center justify-center gap-2 bg-red-100 hover:bg-red-200 text-red-600 px-3 py-2 rounded-lg transition text-sm font-medium disabled:opacity-50"
+                      >
+                        <Trash2 size={16} />
+                        <span>Delete</span>
+                      </button>
+                    </div>
+                  </div>
+                  </div>
                 ))}
               </div>
             </div>
@@ -296,8 +336,8 @@ const ManageVenue = () => {
 
           {/* Pagination */}
           {filteredVenues.length > 0 && (
-            <div className="flex items-center justify-between mt-6">
-              <div className="text-gray-600">
+            <div className="flex flex-col sm:flex-row items-center justify-between gap-4 mt-6">
+              <div className="text-gray-600 text-sm sm:text-base text-center sm:text-left">
                 Showing {startIndex + 1} to {Math.min(endIndex, filteredVenues.length)} of {filteredVenues.length} Venues
               </div>
               <div className="flex items-center gap-2">
@@ -343,10 +383,10 @@ const ManageVenue = () => {
 
       {/* Add Venue Modal */}
       {showAddModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-2xl p-8 max-w-md w-full mx-4 shadow-2xl">
-            <div className="flex items-center justify-between mb-6">
-              <h2 className="text-2xl font-bold text-purple-700">Add New Venue</h2>
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-2xl p-6 sm:p-8 max-w-md w-full shadow-2xl max-h-[90vh] overflow-y-auto">
+            <div className="flex items-center justify-between mb-4 sm:mb-6">
+              <h2 className="text-xl sm:text-2xl font-bold text-purple-700">Add New Venue</h2>
               <button
                 onClick={handleCloseModal}
                 className="text-gray-400 hover:text-gray-600 transition"

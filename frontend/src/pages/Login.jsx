@@ -40,7 +40,7 @@ const Login = () => {
     };
 
     return (
-        <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+        <div className="min-h-screen flex items-center justify-center bg-gray-50 py-6 sm:py-12 px-4 sm:px-6 lg:px-8">
             <div className="flex bg-white rounded-2xl shadow-xl overflow-hidden max-w-4xl w-full">
                 {/* Left Panel */}
                 <div className="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-purple-400 via-purple-500 to-purple-600 relative overflow-hidden">
@@ -79,11 +79,16 @@ const Login = () => {
                 </div>
 
                 {/* Right Panel - Login Form */}
-                <div className="w-full lg:w-1/2 flex items-center justify-center p-8 bg-gray-50">
+                <div className="w-full lg:w-1/2 flex items-center justify-center p-6 sm:p-8 bg-gray-50">
                     <div className="max-w-md w-full space-y-6">
+                    {/* Mobile Logo */}
+                    <div className="lg:hidden flex justify-center mb-4">
+                        <img src={logo} alt="BookMyVenue Logo" className="h-16 w-auto" />
+                    </div>
+
                     {/* Header */}
                     <div>
-                        <h2 className="text-3xl font-bold text-purple-600">Login</h2>
+                        <h2 className="text-2xl sm:text-3xl font-bold text-purple-600">Login</h2>
                         <p className="mt-1 text-sm text-gray-600">Hi, welcome back!</p>
                     </div>
 
@@ -98,7 +103,7 @@ const Login = () => {
                                 <button
                                     type="button"
                                     onClick={() => setRole('student')}
-                                    className={`py-2.5 px-3 rounded-lg border-2 transition text-sm font-medium ${
+                                    className={`py-2 sm:py-2.5 px-2 sm:px-3 rounded-lg border-2 transition text-xs sm:text-sm font-medium ${
                                         role === 'student'
                                             ? 'border-purple-500 bg-purple-50 text-purple-700'
                                             : 'border-gray-200 hover:border-gray-300 text-gray-700'
@@ -109,7 +114,7 @@ const Login = () => {
                                 <button
                                     type="button"
                                     onClick={() => setRole('staff')}
-                                    className={`py-2.5 px-3 rounded-lg border-2 transition text-sm font-medium ${
+                                    className={`py-2 sm:py-2.5 px-2 sm:px-3 rounded-lg border-2 transition text-xs sm:text-sm font-medium ${
                                         role === 'staff'
                                             ? 'border-purple-500 bg-purple-50 text-purple-700'
                                             : 'border-gray-200 hover:border-gray-300 text-gray-700'
@@ -120,7 +125,7 @@ const Login = () => {
                                 <button
                                     type="button"
                                     onClick={() => setRole('admin')}
-                                    className={`py-2.5 px-3 rounded-lg border-2 transition text-sm font-medium ${
+                                    className={`py-2 sm:py-2.5 px-2 sm:px-3 rounded-lg border-2 transition text-xs sm:text-sm font-medium ${
                                         role === 'admin'
                                             ? 'border-purple-500 bg-purple-50 text-purple-700'
                                             : 'border-gray-200 hover:border-gray-300 text-gray-700'

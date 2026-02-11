@@ -45,10 +45,10 @@ const Dashboard = () => {
     <div className="flex h-screen w-full bg-gradient-to-br from-purple-50 to-blue-50 overflow-hidden">
       <Sidebar activePage="dashboard" />
 
-      <div className="flex-1 p-4 overflow-y-auto h-full">
+      <div className="flex-1 p-4 sm:p-6 lg:p-8 overflow-y-auto h-full pt-20 lg:pt-4">
         <div className="mb-4">
           <div>
-            <h1 className="text-4xl font-bold text-purple-600 mb-2">Hello, {user?.name || 'User'}!</h1>
+            <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-purple-600 mb-2">Hello, {user?.name || 'User'}!</h1>
             <p className="text-gray-600">{isStudent ? 'Stay updated with notices, events, and your bookings.' : 'Welcome to your venue management dashboard.'}</p>
           </div>
         </div>
@@ -74,10 +74,10 @@ const Dashboard = () => {
 
         {isStudent ? (
           <>
-            <div className="bg-white rounded-2xl p-4 shadow-lg mb-4">
+            <div className="bg-white rounded-2xl p-4 sm:p-6 shadow-lg mb-4">
               <div className="flex items-center gap-2 mb-4">
-                <Bell className="text-purple-600" size={24} />
-                <h2 className="text-xl font-bold text-purple-600">Important Notices</h2>
+                <Bell className="text-purple-600" size={20} />
+                <h2 className="text-lg sm:text-xl font-bold text-purple-600">Important Notices</h2>
               </div>
               <div className="space-y-3">
                 {notices.map((notice) => (
@@ -95,10 +95,10 @@ const Dashboard = () => {
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-2">
-              <div className="bg-white rounded-2xl p-4 shadow-lg">
+              <div className="bg-white rounded-2xl p-4 sm:p-6 shadow-lg">
                 <div className="flex items-center gap-2 mb-4">
-                  <Calendar className="text-purple-600" size={24} />
-                  <h2 className="text-xl font-bold text-purple-600">Events Today</h2>
+                  <Calendar className="text-purple-600" size={20} />
+                  <h2 className="text-lg sm:text-xl font-bold text-purple-600">Events Today</h2>
                 </div>
 
                 <div className="space-y-3">
@@ -129,8 +129,8 @@ const Dashboard = () => {
         ) : (
           <>
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-2">
-              <div className="bg-white rounded-2xl p-4 shadow-lg">
-                <h2 className="text-xl font-bold text-purple-600 mb-4">Upcoming Schedule</h2>
+              <div className="bg-white rounded-2xl p-4 sm:p-6 shadow-lg">
+                <h2 className="text-lg sm:text-xl font-bold text-purple-600 mb-4">Upcoming Schedule</h2>
                 <p className="text-gray-500 text-sm mb-4">April 2024</p>
 
                 <div className="space-y-3">
@@ -156,9 +156,9 @@ const Dashboard = () => {
                 <button className="w-full mt-3 bg-purple-600 text-white py-2 rounded-lg hover:bg-purple-700 transition">View Schedule</button>
               </div>
 
-              <div className="bg-white rounded-2xl p-4 shadow-lg">
-                <div className="flex justify-between items-center mb-4">
-                  <h2 className="text-xl font-bold text-purple-600">Recent Bookings</h2>
+              <div className="bg-white rounded-2xl p-4 sm:p-6 shadow-lg">
+                <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 gap-2">
+                  <h2 className="text-lg sm:text-xl font-bold text-purple-600">Recent Bookings</h2>
                   <a href="#" className="text-purple-600 text-sm hover:underline">View All »</a>
                 </div>
 
@@ -183,7 +183,7 @@ const Dashboard = () => {
                   </table>
                 </div>
 
-                <div className="grid grid-cols-2 gap-3 mt-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-4">
                   <button className="bg-purple-500 text-white py-2 px-3 rounded-lg hover:bg-purple-600 transition flex items-center justify-center gap-2">
                     <Calendar size={20} />
                     <span>Book a Venue</span>

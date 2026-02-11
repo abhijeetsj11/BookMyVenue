@@ -97,17 +97,17 @@ const Bookvenue = () => {
     <div className="flex h-screen w-full bg-gradient-to-br from-purple-50 to-blue-50 overflow-hidden">
       <Sidebar activePage="book-venue" />
 
-      <main className="flex-1 overflow-y-auto p-6">
+      <main className="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8 pt-20 lg:pt-4">
         <div className="max-w-6xl mx-auto">
-          <header className="mb-6">
+          <header className="mb-4 sm:mb-6">
             <div>
-              <h1 className="text-3xl font-bold text-purple-600">Book a Venue</h1>
+              <h1 className="text-2xl sm:text-3xl font-bold text-purple-600">Book a Venue</h1>
               <p className="text-sm text-gray-600 mt-1">Fill out the form below to request a venue for your extra class or event.</p>
             </div>
           </header>
 
-          <section className="bg-white shadow-lg rounded-2xl p-6">
-            <form onSubmit={handleSubmit} className="space-y-6">
+          <section className="bg-white shadow-lg rounded-2xl p-4 sm:p-6">
+            <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-6">
               {error ? (
                 <div className="text-sm text-red-600 bg-red-50 border border-red-100 rounded-lg px-4 py-3">
                   {error}
@@ -141,7 +141,7 @@ const Bookvenue = () => {
               </div>
 
               {/* Title & Attendees */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">Title</label>
                   <input
@@ -165,7 +165,7 @@ const Bookvenue = () => {
               </div>
 
               {/* Date & Time */}
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">Date</label>
                   <div className="flex items-center gap-2">

@@ -121,11 +121,11 @@ const ManageBookings = () => {
     <div className="flex h-screen bg-gray-50">
       <Sidebar activePage="manage-bookings" />
       
-      <div className="flex-1 overflow-auto">
-        <div className="p-8">
+      <div className="flex-1 overflow-auto pt-20 lg:pt-0">
+        <div className="p-4 sm:p-6 lg:p-8">
           {/* Header */}
-          <div className="mb-8">
-            <h1 className="text-4xl font-bold text-purple-700 mb-2">Manage Bookings</h1>
+          <div className="mb-6 sm:mb-8">
+            <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-purple-700 mb-2">Manage Bookings</h1>
             <p className="text-gray-600">Review and approve venue booking requests from users.</p>
           </div>
 
@@ -145,12 +145,12 @@ const ManageBookings = () => {
             </div>
 
             {/* Filter Tabs */}
-            <div className="flex gap-2 overflow-x-auto pb-2">
+            <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-hide">
               {filterCategories.map((category) => (
                 <button
                   key={category.value}
                   onClick={() => setActiveFilter(category.value)}
-                  className={`px-6 py-2 rounded-full whitespace-nowrap transition-all ${
+                  className={`px-4 sm:px-6 py-2 rounded-full whitespace-nowrap transition-all text-sm sm:text-base ${
                     activeFilter === category.value
                       ? 'bg-purple-500 text-white shadow-md'
                       : 'bg-white text-gray-600 hover:bg-purple-50'
@@ -177,21 +177,21 @@ const ManageBookings = () => {
           )}
 
           {/* Bookings List */}
-          <div className="space-y-4">
+          <div className="space-y-3 sm:space-y-4">
             {filteredBookings.map((booking) => (
               <div
                 key={booking._id}
-                className="bg-white rounded-xl shadow-sm hover:shadow-md transition-shadow p-6"
+                className="bg-white rounded-xl shadow-sm hover:shadow-md transition-shadow p-4 sm:p-6"
               >
-                <div className="flex items-start justify-between">
+                <div className="flex flex-col lg:flex-row items-start justify-between gap-4">
                   <div className="flex-1">
                     {/* Header */}
-                    <div className="flex items-start gap-4 mb-4">
-                      <div className="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center">
-                        <Calendar className="text-purple-600" size={24} />
+                    <div className="flex items-start gap-3 sm:gap-4 mb-4">
+                      <div className="w-10 h-10 sm:w-12 sm:h-12 bg-purple-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                        <Calendar className="text-purple-600" size={20} />
                       </div>
                       <div className="flex-1">
-                        <h3 className="text-xl font-bold text-gray-900 mb-1">
+                        <h3 className="text-lg sm:text-xl font-bold text-gray-900 mb-1">
                           {booking.title || 'Booking Request'}
                         </h3>
                         <div className="flex items-center gap-3 text-sm text-gray-600">
@@ -208,7 +208,7 @@ const ManageBookings = () => {
                     </div>
 
                     {/* Details Grid */}
-                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-4">
                       <div>
                         <p className="text-xs text-gray-500 mb-1">Venue</p>
                         <p className="font-semibold text-gray-900">{booking.venue?.name || 'N/A'}</p>
@@ -246,11 +246,11 @@ const ManageBookings = () => {
 
                   {/* Actions */}
                   {booking.status === 'pending' && (
-                    <div className="flex gap-2 ml-4">
+                    <div className="flex flex-col sm:flex-row gap-2 w-full lg:w-auto lg:ml-4">
                       <button
                         onClick={() => handleApprove(booking._id)}
                         disabled={loading}
-                        className="flex items-center gap-2 bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg transition font-medium disabled:opacity-50"
+                        className="flex-1 sm:flex-initial flex items-center justify-center gap-2 bg-green-500 hover:bg-green-600 text-white px-3 sm:px-4 py-2 rounded-lg transition font-medium disabled:opacity-50 text-sm sm:text-base"
                       >
                         <Check size={18} />
                         Approve
@@ -258,7 +258,7 @@ const ManageBookings = () => {
                       <button
                         onClick={() => handleReject(booking._id)}
                         disabled={loading}
-                        className="flex items-center gap-2 bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg transition font-medium disabled:opacity-50"
+                        className="flex-1 sm:flex-initial flex items-center justify-center gap-2 bg-red-500 hover:bg-red-600 text-white px-3 sm:px-4 py-2 rounded-lg transition font-medium disabled:opacity-50 text-sm sm:text-base"
                       >
                         <X size={18} />
                         Reject

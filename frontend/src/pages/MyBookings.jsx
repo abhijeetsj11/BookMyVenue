@@ -103,23 +103,23 @@ const MyBookings = () => {
     <div className="flex h-screen bg-gray-50">
       <Sidebar activePage="my-bookings" />
       
-      <div className="flex-1 overflow-auto">
-        <div className="p-8">
+      <div className="flex-1 overflow-auto pt-20 lg:pt-0">
+        <div className="p-4 sm:p-6 lg:p-8">
           {/* Header Section */}
           <div className="mb-2">
             <div>
-              <h1 className="text-4xl font-bold text-purple-400 mb-2">My Bookings</h1>
+              <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-purple-400 mb-2">My Bookings</h1>
               <p className="text-gray-500 text-sm">Track your extra class and event booking requests.</p>
             </div>
           </div>
 
           {/* Filter Tabs */}
-          <div className="flex gap-3 mb-8 mt-6">
+          <div className="flex gap-2 sm:gap-3 mb-6 sm:mb-8 mt-6 overflow-x-auto pb-2 scrollbar-hide">
             {filterCategories.map(category => (
               <button
                 key={category}
                 onClick={() => setActiveFilter(category)}
-                className={`px-6 py-2 rounded-full transition duration-200 font-medium ${
+                className={`px-4 sm:px-6 py-2 rounded-full transition duration-200 font-medium whitespace-nowrap text-sm sm:text-base ${
                   activeFilter === category
                     ? 'bg-purple-500 text-white shadow-md'
                     : 'bg-white text-gray-500 hover:bg-purple-50'
@@ -138,8 +138,8 @@ const MyBookings = () => {
           ) : null}
 
           <div className="bg-white rounded-2xl shadow-sm overflow-hidden">
-            {/* Table Header */}
-            <div className="grid grid-cols-4 gap-4 px-6 py-4 bg-gray-50 border-b border-gray-100">
+            {/* Table Header - Hidden on mobile */}
+            <div className="hidden md:grid grid-cols-4 gap-4 px-6 py-4 bg-gray-50 border-b border-gray-100">
               <div className="text-sm font-semibold text-gray-500">Venue</div>
               <div className="text-sm font-semibold text-gray-500">Date & Time</div>
               <div className="text-sm font-semibold text-gray-500">Purpose</div>
@@ -152,7 +152,9 @@ const MyBookings = () => {
                 <div className="px-6 py-8 text-center text-gray-500">Loading bookings…</div>
               ) : (
                 filteredBookings.map(booking => (
-                  <div key={booking.id} className="grid grid-cols-4 gap-4 px-6 py-4 hover:bg-gray-50 transition duration-150">
+                  <div key={booking.id}>
+                    {/* Desktop View */}
+                    <div className="hidden md:grid grid-cols-4 gap-4 px-6 py-4 hover:bg-gray-50 transition duration-150">
                   {/* Venue */}
                   <div className="flex items-center gap-3">
                     <div className="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center flex-shrink-0">
@@ -181,6 +183,37 @@ const MyBookings = () => {
                     <span className={`px-4 py-1.5 rounded-full text-sm font-medium ${getStatusStyle(booking.status)}`}>
                       {booking.status}
                     </span>
+                  </div>
+                  </div>
+
+                  {/* Mobile View - Card Format */}
+                  <div className="md:hidden p-4 hover:bg-gray-50 transition">
+                    <div className="flex items-start gap-3 mb-3">
+                      <div className="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                        <Building2 className="text-purple-500" size={20} />
+                      </div>
+                      <div className="flex-1">
+                        <div className="font-semibold text-gray-800 mb-1">{booking.venue}</div>
+                        <div className="text-sm text-gray-500">{booking.subtitle}</div>
+                      </div>
+                      <span className={`px-3 py-1 rounded-full text-xs font-medium ${getStatusStyle(booking.status)}`}>
+                        {booking.status}
+                      </span>
+                    </div>
+                    <div className="space-y-2 ml-15">
+                      <div className="flex items-center gap-2 text-sm">
+                        <span className="text-gray-500">Date:</span>
+                        <span className="text-gray-800 font-medium">{booking.date}</span>
+                      </div>
+                      <div className="flex items-center gap-2 text-sm">
+                        <span className="text-gray-500">Time:</span>
+                        <span className="text-gray-600">{booking.time}</span>
+                      </div>
+                      <div className="flex items-center gap-2 text-sm">
+                        <div className={`w-2 h-2 rounded-full ${getPurposeColor(booking.purposeColor)}`}></div>
+                        <span className="text-gray-700">{booking.purpose}</span>
+                      </div>
+                    </div>
                   </div>
                   </div>
                 ))

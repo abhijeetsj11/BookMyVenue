@@ -1,15 +1,22 @@
-import { Calendar, Building2, CheckCircle, LogOut, LayoutDashboard, ClipboardList } from 'lucide-react';
+import { Calendar, Building2, CheckCircle, LogOut, LayoutDashboard, ClipboardList, Menu, X } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
+import { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import logo from '../assets/bookmyvenuelogo.png';
 
 const Sidebar = ({ activePage = 'dashboard' }) => {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   const handleLogout = () => {
     logout();
     navigate('/');
+    setIsMenuOpen(false);
+  };
+
+  const handleLinkClick = () => {
+    setIsMenuOpen(false);
   };
 
   // Check if user should see specific menu items
@@ -17,15 +24,46 @@ const Sidebar = ({ activePage = 'dashboard' }) => {
   const isAdmin = user?.role === 'admin';
 
   return (
-    <div className="w-64 bg-gradient-to-b from-purple-600 to-purple-700 text-white p-4 flex flex-col h-full">
-      <div className="flex items-center gap-3 mb-6">
-        <img src={logo} alt="BookMyVenue Logo" className="h-12 w-auto" />
-        <span className="text-xl font-bold text-white">BookMyVenue</span>
+    <>
+      {/* Mobile Header */}
+      <div className="lg:hidden fixed top-0 left-0 right-0 bg-gradient-to-r from-purple-600 to-purple-700 text-white p-4 flex items-center justify-between z-40">
+        <div className="flex items-center gap-2">
+          <img src={logo} alt="BookMyVenue Logo" className="h-8 w-auto" />
+          <span className="text-lg font-bold">BookMyVenue</span>
+        </div>
+        <button
+          onClick={() => setIsMenuOpen(!isMenuOpen)}
+          className="p-2 hover:bg-purple-500 rounded-lg transition"
+          aria-label="Toggle menu"
+        >
+          {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
+        </button>
       </div>
+
+      {/* Overlay */}
+      {isMenuOpen && (
+        <div
+          className="lg:hidden fixed inset-0 bg-black bg-opacity-50 z-40"
+          onClick={() => setIsMenuOpen(false)}
+        />
+      )}
+
+      {/* Sidebar */}
+      <div className={`
+        fixed lg:relative top-0 left-0 h-full
+        w-64 bg-gradient-to-b from-purple-600 to-purple-700 text-white p-4 flex flex-col
+        transform transition-transform duration-300 ease-in-out z-50
+        ${isMenuOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
+      `}>
+        <div className="flex items-center gap-3 mb-6 mt-16 lg:mt-0">
+          <img src={logo} alt="BookMyVenue Logo" className="h-12 w-auto" />
+          <span className="text-xl font-bold text-white">BookMyVenue</span>
+        </div>
 
       <nav className="flex-1 space-y-2">
         <Link 
-          to="/dashboard" 
+          to="/dashboard"
+          onClick={handleLinkClick}
           className={`flex items-center gap-3 px-4 py-3 rounded-lg transition ${
             activePage === 'dashboard' ? 'bg-purple-500' : 'hover:bg-purple-500'
           }`}
@@ -34,7 +72,8 @@ const Sidebar = ({ activePage = 'dashboard' }) => {
           <span>Dashboard</span>
         </Link>
         <Link 
-          to="/venues" 
+          to="/venues"
+          onClick={handleLinkClick}
           className={`flex items-center gap-3 px-4 py-3 rounded-lg transition ${
             activePage === 'venues' ? 'bg-purple-500' : 'hover:bg-purple-500'
           }`}
@@ -46,7 +85,8 @@ const Sidebar = ({ activePage = 'dashboard' }) => {
         {canBookVenue && (
           <>
             <Link 
-              to="/book-venue" 
+              to="/book-venue"
+              onClick={handleLinkClick}
               className={`flex items-center gap-3 px-4 py-3 rounded-lg transition ${
                 activePage === 'book-venue' ? 'bg-purple-500' : 'hover:bg-purple-500'
               }`}
@@ -55,7 +95,8 @@ const Sidebar = ({ activePage = 'dashboard' }) => {
               <span>Book Venue</span>
             </Link>
             <Link 
-              to="/my-bookings" 
+              to="/my-bookings"
+              onClick={handleLinkClick}
               className={`flex items-center gap-3 px-4 py-3 rounded-lg transition ${
                 activePage === 'my-bookings' ? 'bg-purple-500' : 'hover:bg-purple-500'
               }`}
@@ -70,7 +111,8 @@ const Sidebar = ({ activePage = 'dashboard' }) => {
           <div className="pt-6">
             <p className="text-purple-300 text-sm uppercase tracking-wider px-4 mb-2">Admin</p>
             <Link 
-              to="/manage-venues" 
+              to="/manage-venues"
+              onClick={handleLinkClick}
               className={`flex items-center gap-3 px-4 py-3 rounded-lg transition ${
                 activePage === 'manage-venues' ? 'bg-purple-500' : 'hover:bg-purple-500'
               }`}
@@ -79,7 +121,8 @@ const Sidebar = ({ activePage = 'dashboard' }) => {
               <span>Manage Venues</span>
             </Link>
             <Link 
-              to="/manage-bookings" 
+              to="/manage-bookings"
+              onClick={handleLinkClick}
               className={`flex items-center gap-3 px-4 py-3 rounded-lg transition ${
                 activePage === 'manage-bookings' ? 'bg-purple-500' : 'hover:bg-purple-500'
               }`}
@@ -109,6 +152,7 @@ const Sidebar = ({ activePage = 'dashboard' }) => {
         </button>
       </div>
     </div>
+    </>
   );
 };
 
